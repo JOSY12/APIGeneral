@@ -1,19 +1,19 @@
-import { sequelize } from "../db.js";
-import { DataTypes } from "sequelize";
+import { paginacocina } from '../db.js'
+import { DataTypes } from 'sequelize'
 
-export const Receta = sequelize.define("Receta", {
+export const Receta = paginacocina.define('Receta', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true,
+    autoIncrement: true
   },
   nombre: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING
   },
   imagen: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING
   },
   datos: {
-    type: DataTypes.STRING,
-  },
-});
+    type: DataTypes.STRING
+  }
+})
