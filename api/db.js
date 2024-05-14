@@ -5,9 +5,9 @@ import pg from 'pg'
 //  / const BDLOCAL = "postgres://postgres:1212@localhost:5432/basededatos";
 const POSTGRESDB =
   process.env.POSTGRESDB ||
-  'postgres://postgres:1212@localhost:5432/paginacocina'
+  'postgres://postgres:1212@localhost:5432/basededatos'
 
-export const paginacocina = new Sequelize(`${POSTGRESDB}`, {
+export const basedatos = new Sequelize(`${POSTGRESDB}`, {
   dialectModule: pg,
   dialect: 'postgres'
 })

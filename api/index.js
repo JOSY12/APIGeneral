@@ -2,8 +2,8 @@ import express from 'express'
 import cors from 'cors'
 
 import morgan from 'morgan'
-import general from './routes/routergeneral.js'
-import { paginacocina } from './db.js'
+import fastcheckout from './Fastcheckout/routes/fastcheckout.js'
+import ecomerseuno from './EcomerseUno/routes/fastcheckout.js'
 const PORT = process.env.PORT
 
 const servidor = express()
@@ -22,19 +22,14 @@ servidor.use(
 
 servidor.use(express.json({ limit: '50mb' }))
 
-servidor.use(general)
+servidor.use('/fastcheckout', fastcheckout)
+servidor.use('/ecomerseuno', ecomerseuno)
 
-try {
-  await paginacocina.sync({ force: false })
-
-  console.log(
-    'conectado a basedatos Ecomerse:',
-    process.env.POSTGRESDB ||
-      'postgres://postgres:1212@localhost:5432/paginacocina'
-  )
-} catch (error) {
-  console.log('error al intentar conectar a basedatos', error)
-}
 servidor.listen(PORT, () => {
+  console.log(
+    'conectado a basedatos:',
+    process.env.POSTGRESDB ||
+      'postgres://postgres:1212@localhost:5432/basededatos'
+  )
   console.log(`server en linea puerto  ${PORT}`)
 })
