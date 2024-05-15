@@ -13,8 +13,10 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.19.2",
+    "mercadopago": "^2.0.9",
     "morgan": "^1.10.0",
     "pg": "^8.11.5",
-    "sequelize": "^6.37.3"
+    "sequelize": "^6.37.3",
+    "uuidv4": "^6.2.13"
   }
 }
