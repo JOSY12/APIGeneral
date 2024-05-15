@@ -16,8 +16,8 @@ export const crearcompra = async (req, res) => {
         comprando.push({
           id: i + 1,
           title: element.nombre,
-          unit_price: element.precio,
-          quantity: element.cantidad * 10
+          unit_price: element.precio * 10,
+          quantity: element.cantidad
         })
       }
     }
