@@ -3,7 +3,8 @@ import { Router } from 'express'
 const ecomerseuno = Router()
 
 // ecomerseUno.use('/compras', rutascompras)
-ecomerseuno.get('/', (req, res) => {
+ecomerseuno.use('/home', (req, res) => {
   res.send('ecomerseuno vivo')
 })
+
 export default ecomerseuno
