@@ -44,7 +44,6 @@ export const crearcompra = async (req, res) => {
       body,
       idempotencyKey: uuidv4()
     }).then((result) => {
-      console.log(result)
       return res.status(200).json(result.init_point)
     })
   } catch (error) {

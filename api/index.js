@@ -26,29 +26,26 @@ servidor.use(express.json({ limit: '50mb' }))
 servidor.use('/fastcheckout', fastcheckout)
 servidor.use('/ecomerseuno', ecomerseuno)
 
-const conectarservidor = async () => {
-  try {
-    // await basedatos.query('DROP SCHEMA IF EXISTS "EcomerseUno" CASCADE;')
-    // console.log('esquema eliminado')
-    await basedatos.query('CREATE SCHEMA IF NOT EXISTS ecomerseuno;')
-    console.log('esquema creado')
+servidor.listen(PORT, () => {
+  console.log(
+    `conectado a basedatos ${basedatos.config.database} }`,
+    process.env.POSTGRESDB ||
+      'postgres://postgres:1212@localhost:5432/basededatos'
+  )
+  console.log(`server en linea puerto  ${PORT}`)
+})
 
-    sincronisacion.forEach((modelo) => {
-      modelo.sync({ force: false }).then(() => {
-        console.log(`modelo ${modelo.name} sincronizado   `)
-      })
-    })
+try {
+  // await basedatos.query('DROP SCHEMA IF EXISTS "EcomerseUno" CASCADE;')
+  // console.log('esquema eliminado')
+  // await basedatos.query('CREATE SCHEMA IF NOT EXISTS ecomerseuno;')
+  // console.log('esquema creado')
 
-    servidor.listen(PORT, () => {
-      console.log(
-        `conectado a basedatos ${basedatos.config.database} }`,
-        process.env.POSTGRESDB ||
-          'postgres://postgres:1212@localhost:5432/basededatos'
-      )
-      console.log(`server en linea puerto  ${PORT}`)
+  sincronisacion.forEach((modelo) => {
+    modelo.sync({ force: false }).then(() => {
+      console.log(`modelo ${modelo.name} sincronizado   `)
     })
-  } catch (error) {
-    console.log(error)
-  }
+  })
+} catch (error) {
+  console.log(error)
 }
-conectarservidor()

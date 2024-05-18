@@ -6,10 +6,9 @@ export const categorias = basedatos.define(
   'categorias',
   {
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.INTEGER,
       primaryKey: true,
-
-      defaultValue: DataTypes.UUIDV4
+      autoIncrement: true
     },
     nombre: {
       type: DataTypes.STRING

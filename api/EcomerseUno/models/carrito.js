@@ -6,10 +6,9 @@ export const carrito = basedatos.define(
   'carrito',
   {
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.INTEGER,
       primaryKey: true,
-
-      defaultValue: DataTypes.UUIDV4
+      autoIncrement: true
     }
   },
   {

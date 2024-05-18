@@ -6,10 +6,9 @@ export const producto = basedatos.define(
   'producto',
   {
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.INTEGER,
       primaryKey: true,
-
-      defaultValue: DataTypes.UUIDV4
+      autoIncrement: true
     },
     nombre: {
       type: DataTypes.STRING
@@ -21,9 +20,9 @@ export const producto = basedatos.define(
       type: DataTypes.STRING
     },
     precio: {
-      type: DataTypes.DECIMAL
+      type: DataTypes.INTEGER
     },
-    img: {
+    imagen: {
       type: DataTypes.STRING
     },
     stock: {

@@ -6,10 +6,9 @@ export const favoritos = basedatos.define(
   'favoritos',
   {
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.INTEGER,
       primaryKey: true,
-
-      defaultValue: DataTypes.UUIDV4
+      autoIncrement: true
     }
   },
   {

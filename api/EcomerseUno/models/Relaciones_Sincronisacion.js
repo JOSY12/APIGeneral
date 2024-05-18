@@ -5,25 +5,14 @@ import { compra } from './compra.js'
 import { producto } from './producto.js'
 import { categorias } from './categorias.js'
 import { comentario } from './comentario.js'
+import { basedatos } from '../../db.js'
 
-usuarios.hasOne(favoritos, {
-  foreignKey: 'id',
-  as: 'favoritos'
-})
-favoritos.belongsTo(usuarios, {
-  foreignKey: 'id',
-  as: 'favoritos'
-})
+usuarios.hasOne(favoritos)
+favoritos.belongsTo(usuarios)
 
-usuarios.hasOne(carrito, {
-  foreignKey: 'id',
-  as: 'carrito'
-})
+usuarios.hasOne(carrito)
 
-carrito.belongsTo(usuarios, {
-  foreignKey: 'id',
-  as: 'carrito'
-})
+carrito.belongsTo(usuarios)
 
 usuarios.hasMany(compra, {
   foreignKey: 'id',
@@ -36,18 +25,33 @@ compra.belongsTo(usuarios, {
 })
 
 carrito.belongsToMany(producto, {
-  through: 'relacionCarritoProducto' // No necesitas una tabla intermedia
+  through: 'relacionCarritoProducto', // No necesitas una tabla intermedia
+  onDelete: 'CASCADE'
 })
 
 producto.belongsToMany(carrito, {
-  through: 'relacionCarritoProducto' // No necesitas una tabla intermedia
+  through: 'relacionCarritoProducto', // No necesitas una tabla intermedia
+  onDelete: 'CASCADE' // No necesitas una tabla intermedia
 })
+
+favoritos.belongsToMany(producto, {
+  through: 'FavoritosProducto',
+  onDelete: 'CASCADE'
+})
+
+producto.belongsToMany(favoritos, {
+  through: 'FavoritosProducto',
+  onDelete: 'CASCADE'
+})
+
 compra.belongsToMany(producto, {
-  through: 'relacionCompraProducto' // Tabla intermedia para la relación muchos a muchos
+  through: 'relacionCompraProducto', // No necesitas una tabla intermedia
+  onDelete: 'CASCADE' // Tabla intermedia para la relación muchos a muchos
 })
 
 producto.belongsToMany(compra, {
-  through: 'relacionCompraProducto' // Tabla intermedia para la relación muchos a muchos
+  through: 'relacionCompraProducto', // No necesitas una tabla intermedia
+  onDelete: 'CASCADE' // Tabla intermedia para la relación muchos a muchos
 })
 
 producto.hasMany(comentario, {
@@ -61,18 +65,21 @@ comentario.belongsTo(producto, {
 })
 
 producto.belongsToMany(categorias, {
-  through: 'relacionProductoCategoria' // Nombre de la tabla intermedia
+  through: 'relacionProductoCategoria', // No necesitas una tabla intermedia
+  onDelete: 'CASCADE' // Nombre de la tabla intermedia
 })
 
 categorias.belongsToMany(producto, {
-  through: 'relacionProductoCategoria' // Nombre de la tabla intermedia
+  through: 'relacionProductoCategoria', // No necesitas una tabla intermedia
+  onDelete: 'CASCADE' // Nombre de la tabla intermedia
 })
 export const sincronisacion = [
   usuarios,
+
+  producto,
   favoritos,
   carrito,
   compra,
-  producto,
   comentario,
   categorias
 ]
