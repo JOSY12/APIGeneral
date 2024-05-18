@@ -1,4 +1,4 @@
-import express from 'express'
+import Express from 'express'
 import cors from 'cors'
 import { basedatos } from './db.js'
 import { sincronisacion } from './EcomerseUno/models/Relaciones_Sincronisacion.js'
@@ -7,12 +7,12 @@ import fastcheckout from './Fastcheckout/routes/fastcheckout.js'
 import ecomerseuno from './EcomerseUno/routes/ecomerseuno.js'
 const PORT = process.env.PORT
 
-const servidor = express()
+const servidor = Express()
 
-servidor.use(express.json())
+servidor.use(Express.json())
 
 servidor.use(morgan('dev'))
-servidor.use(express.urlencoded({ extended: true, limit: '50mb' }))
+servidor.use(Express.urlencoded({ extended: true, limit: '50mb' }))
 
 servidor.use(
   cors({
@@ -21,7 +21,7 @@ servidor.use(
   })
 )
 
-servidor.use(express.json({ limit: '50mb' }))
+servidor.use(Express.json({ limit: '50mb' }))
 
 servidor.use('/fastcheckout', fastcheckout)
 servidor.use('/ecomerseuno', ecomerseuno)
