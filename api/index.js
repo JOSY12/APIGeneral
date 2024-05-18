@@ -26,16 +26,15 @@ servidor.use(express.json({ limit: '50mb' }))
 servidor.use('/fastcheckout', fastcheckout)
 servidor.use('/ecomerseuno', ecomerseuno)
 
-servidor.listen(PORT, () => {
-  console.log(
-    `conectado a basedatos ${basedatos.config.database} }`,
-    process.env.POSTGRESDB ||
-      'postgres://postgres:1212@localhost:5432/basededatos'
-  )
-  console.log(`server en linea puerto  ${PORT}`)
-})
-
 try {
+  servidor.listen(PORT, () => {
+    console.log(
+      `conectado a basedatos ${basedatos.config.database} }`,
+      process.env.POSTGRESDB ||
+        'postgres://postgres:1212@localhost:5432/basededatos'
+    )
+    console.log(`server en linea puerto  ${PORT}`)
+  })
   // await basedatos.query('DROP SCHEMA IF EXISTS "EcomerseUno" CASCADE;')
   // console.log('esquema eliminado')
   // await basedatos.query('CREATE SCHEMA IF NOT EXISTS ecomerseuno;')
