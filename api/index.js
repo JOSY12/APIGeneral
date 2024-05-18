@@ -6,7 +6,7 @@ import morgan from 'morgan'
 import fastcheckout from './Fastcheckout/routes/fastcheckout.js'
 import ecomerseuno from './EcomerseUno/routes/ecomerseuno.js'
 const PORT = process.env.PORT
-
+const DEPLOY = process.env.DEPLOY
 const servidor = Express()
 
 servidor.use(Express.json())
@@ -16,7 +16,7 @@ servidor.use(Express.urlencoded({ extended: true, limit: '50mb' }))
 
 servidor.use(
   cors({
-    origin: process.env.DEPLOY,
+    origin: DEPLOY,
     credentials: true
   })
 )
@@ -25,16 +25,15 @@ servidor.use(Express.json({ limit: '50mb' }))
 
 servidor.use('/fastcheckout', fastcheckout)
 servidor.use('/ecomerseuno', ecomerseuno)
-
+servidor.listen(PORT, () => {
+  console.log(
+    `conectado a basedatos  }`,
+    process.env.POSTGRESDB ||
+      'postgres://postgres:1212@localhost:5432/basededatos'
+  )
+  console.log(`server en linea puerto  ${PORT}`)
+})
 try {
-  servidor.listen(PORT, () => {
-    console.log(
-      `conectado a basedatos ${basedatos.config.database} }`,
-      process.env.POSTGRESDB ||
-        'postgres://postgres:1212@localhost:5432/basededatos'
-    )
-    console.log(`server en linea puerto  ${PORT}`)
-  })
   // await basedatos.query('DROP SCHEMA IF EXISTS "EcomerseUno" CASCADE;')
   // console.log('esquema eliminado')
   // await basedatos.query('CREATE SCHEMA IF NOT EXISTS ecomerseuno;')
