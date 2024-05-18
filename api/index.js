@@ -36,8 +36,8 @@ servidor.listen(PORT, () => {
 try {
   // await basedatos.query('DROP SCHEMA IF EXISTS "EcomerseUno" CASCADE;')
   // console.log('esquema eliminado')
-  // await basedatos.query('CREATE SCHEMA IF NOT EXISTS ecomerseuno;')
-  // console.log('esquema creado')
+  await basedatos.query('CREATE SCHEMA IF NOT EXISTS ecomerseuno;')
+  console.log('esquema creado')
 
   sincronisacion.forEach((modelo) => {
     modelo.sync({ force: false }).then(() => {
