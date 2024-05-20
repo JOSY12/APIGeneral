@@ -1,7 +1,13 @@
 import { Router } from 'express'
-import { crearcompra } from '../controllers/controllerscompras.js'
+import {
+  comprarmercadopago,
+  comprarstripe,
+  verificarpagos
+} from '../controllers/controllerscompras.js'
 const rutascompras = Router()
 
-rutascompras.post('/crear', crearcompra)
+rutascompras.post('/mercadopago', comprarmercadopago)
+rutascompras.post('/stripe', comprarstripe)
+rutascompras.post('/pagos', verificarpagos)
 
 export default rutascompras

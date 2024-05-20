@@ -5,11 +5,18 @@ import { sincronisacion } from './EcomerseUno/models/Relaciones_Sincronisacion.j
 import morgan from 'morgan'
 import fastcheckout from './Fastcheckout/routes/fastcheckout.js'
 import ecomerseuno from './EcomerseUno/routes/ecomerseuno.js'
+
 const PORT = process.env.PORT
 const DEPLOY = process.env.DEPLOY
 const servidor = Express()
 
-servidor.use(Express.json())
+servidor.use(
+  Express.json({
+    verify: (req, res, buf) => {
+      req.rawBody = buf
+    }
+  })
+)
 
 servidor.use(morgan('dev'))
 servidor.use(Express.urlencoded({ extended: true, limit: '50mb' }))
@@ -28,7 +35,6 @@ servidor.use('/ecomerseuno', ecomerseuno)
 servidor.get('/', (req, res) => {
   res.send('Servidor en linea ')
 })
-
 try {
   servidor.listen(PORT, () => {
     console.log(
@@ -36,7 +42,7 @@ try {
       process.env.POSTGRESDB ||
         'postgres://postgres:1212@localhost:5432/basededatos'
     )
-    console.log(`server en linea puerto  ${PORT}`)
+    console.log(`server en linea puerto http://localhost:${PORT}`)
   })
   // await basedatos.query('DROP SCHEMA IF EXISTS "EcomerseUno" CASCADE;')
   // console.log('esquema eliminado')

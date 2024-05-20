@@ -150,3 +150,22 @@ export const datosusuarios = async (req, res) => {
     })
   }
 }
+
+export const getUsuarios = async (req, res) => {
+  try {
+    const usuarios = await usuarios.findAll()
+
+    if (usuarios) {
+      return res.status(200).json({ usuarios })
+    }
+  } catch (error) {
+    return res.status(500).json({
+      errores: [
+        {
+          error: 'usuarios',
+          mensaje: error
+        }
+      ]
+    })
+  }
+}
