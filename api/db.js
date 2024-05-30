@@ -1,13 +1,13 @@
 import { Sequelize } from 'sequelize'
 import pg from 'pg'
+import 'dotenv/config'
 
-//conectado a basedatos fl0 postgressql
-//  / const BDLOCAL = "postgres://postgres:1212@localhost:5432/basededatos";
-const POSTGRESDB =
-  process.env.POSTGRESDB ||
-  'postgres://postgres:1212@localhost:5432/basededatos'
+const URLBASEDEDATOS =
+  process.env.NODE_ENV === 'NODE'
+    ? process.env.URL_BASEDEDATOS_NODE
+    : process.env.URL_BASEDEDATOS_DOCKER
 
-export const basedatos = new Sequelize(`${POSTGRESDB}`, {
+export const basedatos = new Sequelize(`${URLBASEDEDATOS}`, {
   dialectModule: pg,
   dialect: 'postgres'
 })

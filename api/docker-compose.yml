@@ -1,0 +1,30 @@
+services:
+  servidor_node:
+    container_name: servidor_node
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+
+    links:
+      - basededatos
+    depends_on:
+      - basededatos
+
+  basededatos:
+    container_name: basededatos_postgres
+    image: postgres:latest
+    ports:
+      - '5432:5432'
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

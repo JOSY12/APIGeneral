@@ -5,7 +5,6 @@ import { compra } from './compra.js'
 import { producto } from './producto.js'
 import { categorias } from './categorias.js'
 import { comentario } from './comentario.js'
-import { basedatos } from '../../db.js'
 
 usuarios.hasOne(favoritos)
 favoritos.belongsTo(usuarios)

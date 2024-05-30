@@ -6,6 +6,7 @@ import morgan from 'morgan'
 import fastcheckout from './Fastcheckout/routes/fastcheckout.js'
 import ecomerseuno from './EcomerseUno/routes/ecomerseuno.js'
 import 'dotenv/config'
+import { usuarios } from './EcomerseUno/models/usuarios.js'
 
 const PORT = process.env.PORT
 const DEPLOY = process.env.DEPLOY
@@ -33,20 +34,12 @@ servidor.use(Express.json({ limit: '50mb' }))
 
 servidor.use('/fastcheckout', fastcheckout)
 servidor.use('/ecomerseuno', ecomerseuno)
-servidor.get('/', (req, res) => {
-  res.send('Servidor en linea ')
+servidor.get('/', async (req, res) => {
+  const todos = await usuarios.findAll()
+
+  res.send(`Servidor en linea ${JSON.stringify(todos)}`)
 })
 try {
-  servidor.listen(PORT, () => {
-    console.log(
-      `conectado a basedatos  }`,
-      process.env.POSTGRESDB ||
-        'postgres://postgres:1212@localhost:5432/basededatos'
-    )
-    console.log(`server en linea puerto http://localhost:${PORT}`)
-  })
-  // await basedatos.query('DROP SCHEMA IF EXISTS "EcomerseUno" CASCADE;')
-  // console.log('esquema eliminado')
   await basedatos.query('CREATE SCHEMA IF NOT EXISTS ecomerseuno;')
   console.log('esquema creado')
 
@@ -55,6 +48,18 @@ try {
       console.log(`modelo ${modelo.name} sincronizado   `)
     })
   })
+  servidor.listen(PORT, () => {
+    console.log(
+      `conectado a basedatos: ${process.env.NODE_ENV} `,
+      process.env.NODE_ENV === 'NODE'
+        ? process.env.URL_BASEDEDATOS_NODE
+        : process.env.URL_BASEDEDATOS_DOCKER
+    )
+    console.log(`server en linea puerto http://localhost:${PORT}`)
+  })
+
+  // await basedatos.query('DROP SCHEMA IF EXISTS "EcomerseUno" CASCADE;')
+  // console.log('esquema eliminado')
 } catch (error) {
   console.log(error)
 }
