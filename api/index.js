@@ -5,6 +5,7 @@ import { sincronisacion } from './EcomerseUno/models/Relaciones_Sincronisacion.j
 import morgan from 'morgan'
 import fastcheckout from './Fastcheckout/routes/fastcheckout.js'
 import ecomerseuno from './EcomerseUno/routes/ecomerseuno.js'
+import 'dotenv/config'
 
 const PORT = process.env.PORT
 const DEPLOY = process.env.DEPLOY
@@ -49,7 +50,7 @@ try {
   await basedatos.query('CREATE SCHEMA IF NOT EXISTS ecomerseuno;')
   console.log('esquema creado')
 
-  sincronisacion.forEach((modelo) => {
+  sincronisacion.forEach(modelo => {
     modelo.sync({ force: false }).then(() => {
       console.log(`modelo ${modelo.name} sincronizado   `)
     })

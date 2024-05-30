@@ -44,7 +44,7 @@ export const comprarmercadopago = async (req, res) => {
     await Mercadopago.create({
       body,
       idempotencyKey: random
-    }).then((result) => {
+    }).then(result => {
       console.log(result)
       return res.status(200).json(result.init_point)
       // return res.status(200).json({ result, random })
@@ -124,19 +124,19 @@ export const verificarpagos = async (req, res) => {
 
     PagosStripe.checkout.sessions
       .retrieve(checkoutSessionCompleted.id)
-      .then((session) => {
+      .then(session => {
         console.log(`Session detail:`, session)
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(`Error retrieving session:`, err)
       })
 
     PagosStripe.checkout.sessions
       .listLineItems(checkoutSessionCompleted.id)
-      .then((lineItems) => {
+      .then(lineItems => {
         console.log(`listLineItems items:`, lineItems)
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(`Error listing line items:`, err)
       })
   } else {
