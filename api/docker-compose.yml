@@ -12,19 +12,35 @@ services:
       - .env
 
     links:
-      - basededatos
+      - basededatos_docker
+      - basededatos_postgres
     depends_on:
-      - basededatos
+      - basededatos_docker
+      - basededatos_postgres
 
-  basededatos:
-    container_name: basededatos_postgres
+  basededatos_docker:
+    container_name: basededatos_docker
     image: postgres:latest
     ports:
       - '5432:5432'
     env_file:
       - .env
     volumes:
+      - Docker_data:/var/lib/postgresql/data
+
+  basededatos_postgres:
+    container_name: basededatos_postgres
+    image: postgres:latest
+    ports:
+      - '5433:5432'
+    environment:
+      - POSTGRES_PASSWORD=1212
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=basededatos
+
+    volumes:
       - postgres_data:/var/lib/postgresql/data
 
 volumes:
+  Docker_data:
   postgres_data:

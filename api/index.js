@@ -34,11 +34,15 @@ servidor.use(Express.json({ limit: '50mb' }))
 
 servidor.use('/fastcheckout', fastcheckout)
 servidor.use('/ecomerseuno', ecomerseuno)
-servidor.get('/', async (req, res) => {
-  const todos = await usuarios.findAll()
 
-  res.send(`Servidor en linea ${JSON.stringify(todos)}`)
+servidor.get('/', (req, res) => {
+  res.send(
+    `<div style="background-color: black; color: white; font-size: 2em; display: flex; justify-content: center; align-items: center; height: 100vh;">
+      Servidor en linea y activo, Conectado a basedatos: ${process.env.POSTGRES_DOCKER}
+    </div>`
+  )
 })
+
 try {
   await basedatos.query('CREATE SCHEMA IF NOT EXISTS ecomerseuno;')
   console.log('esquema creado')
@@ -50,9 +54,9 @@ try {
   })
   servidor.listen(PORT, () => {
     console.log(
-      `conectado a basedatos: ${process.env.NODE_ENV} `,
-      process.env.NODE_ENV === 'NODE'
-        ? process.env.URL_BASEDEDATOS_NODE
+      `conectado a basedatos: ${process.env.POSTGRES_DOCKER} `,
+      process.env.POSTGRES_DOCKER === 'POSTGRES'
+        ? process.env.URL_BASEDEDATOS_POSTGRES
         : process.env.URL_BASEDEDATOS_DOCKER
     )
     console.log(`server en linea puerto http://localhost:${PORT}`)

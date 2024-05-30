@@ -3,8 +3,8 @@ import pg from 'pg'
 import 'dotenv/config'
 
 const URLBASEDEDATOS =
-  process.env.NODE_ENV === 'NODE'
-    ? process.env.URL_BASEDEDATOS_NODE
+  process.env.POSTGRES_DOCKER === 'POSTGRES'
+    ? process.env.URL_BASEDEDATOS_POSTGRES
     : process.env.URL_BASEDEDATOS_DOCKER
 
 export const basedatos = new Sequelize(`${URLBASEDEDATOS}`, {
