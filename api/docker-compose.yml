@@ -1,17 +1,22 @@
 services:
-  servidor_node:
-    container_name: servidor_node
+  servidor_node_express:
+    container_name: servidor_node_express
+    image: servidor_node_express:alpine
     build:
       context: .
       dockerfile: Dockerfile
+
     volumes:
-      - ./:/usr/src/app
+      - .:/usr/src/app
+
     ports:
       - '3000:3000'
+
     env_file:
       - .env
 
     links:
+      - servidor_ngrok_api
       - basededatos_docker
       - basededatos_postgres
     depends_on:
@@ -20,7 +25,7 @@ services:
 
   basededatos_docker:
     container_name: basededatos_docker
-    image: postgres:latest
+    image: postgres:alpine
     ports:
       - '5432:5432'
     env_file:
@@ -30,16 +35,25 @@ services:
 
   basededatos_postgres:
     container_name: basededatos_postgres
-    image: postgres:latest
+    image: postgres:alpine
     ports:
       - '5433:5432'
-    environment:
-      - POSTGRES_PASSWORD=1212
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=basededatos
-
+    env_file:
+      - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  servidor_ngrok_api:
+    container_name: servidor_ngrok_api
+    image: ngrok/ngrok:alpine
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: start --all --config /etc/ngrok.yml
+    ports:
+      - 4040:4040
+    volumes:
+      - ./ngrok.yml:/etc/ngrok.yml
 
 volumes:
   Docker_data:

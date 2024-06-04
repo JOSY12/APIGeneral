@@ -1,0 +1,6 @@
+version: 2
+
+tunnels:
+  api:
+    proto: http
+    addr: servidor_node_express:3000

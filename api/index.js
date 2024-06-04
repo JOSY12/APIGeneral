@@ -37,8 +37,8 @@ servidor.use('/ecomerseuno', ecomerseuno)
 
 servidor.get('/', (req, res) => {
   res.send(
-    `<div style="background-color: black; color: white; font-size: 2em; display: flex; justify-content: center; align-items: center; height: 100vh;">
-      Servidor en linea y activo, Conectado a basedatos: ${process.env.POSTGRES_DOCKER}
+    `<div style="background-color: black; color: #59ff50; font-size: 2em; display: flex; justify-content: center; align-items: center; height: 100vh;">
+      Servidor en linea y activo , Conectado a base de datos : ${process.env.POSTGRES_DOCKER}
     </div>`
   )
 })
