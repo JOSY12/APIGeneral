@@ -18,10 +18,8 @@ services:
     links:
       - servidor_ngrok_api
       - basededatos_docker
-      - basededatos_postgres
     depends_on:
       - basededatos_docker
-      - basededatos_postgres
 
   basededatos_docker:
     container_name: basededatos_docker
@@ -31,17 +29,7 @@ services:
     env_file:
       - .env
     volumes:
-      - Docker_data:/var/lib/postgresql/data
-
-  basededatos_postgres:
-    container_name: basededatos_postgres
-    image: postgres:alpine
-    ports:
-      - '5433:5432'
-    env_file:
-      - .env
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_docker_Data:/var/lib/postgresql/data
 
   servidor_ngrok_api:
     container_name: servidor_ngrok_api
@@ -56,5 +44,4 @@ services:
       - ./ngrok.yml:/etc/ngrok.yml
 
 volumes:
-  Docker_data:
-  postgres_data:
+  postgres_docker_Data:
