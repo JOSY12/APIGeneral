@@ -16,12 +16,14 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mercadopago": "^2.0.9",
-    "morgan": "^1.10.0",
-    "nodemon": "^3.1.0",
     "pg": "^8.11.5",
     "sequelize": "^6.37.3",
     "stripe": "^15.7.0",
     "uuidv4": "^6.2.13",
     "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.3"
   }
 }
