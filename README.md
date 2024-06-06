@@ -16,3 +16,5 @@ gpg -d archivo_env.gpg > archivo_env
 
 ngrok http 3000
 en localhost:4040 se ve el ngrok
+
+FEDORA
