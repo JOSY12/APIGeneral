@@ -22,4 +22,4 @@ manjaro
 
 archtest
 
-gpg ps> @@@@@@@
+gpg ps> @@@@@@@@
