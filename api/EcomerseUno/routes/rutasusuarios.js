@@ -9,6 +9,8 @@ import { esquemaregistro } from '../controllers/schemas/esquemaszod.js'
 const rutasusuarios = Router()
 
 rutasusuarios.post('/registrar', validar(esquemaregistro), registrarusuario)
+// rutasusuarios.post('/registrar', registrarusuario)
+
 rutasusuarios.post('/iniciar', iniciarsesion)
 rutasusuarios.get('/:id', datosusuarios)
 

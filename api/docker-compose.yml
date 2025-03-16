@@ -1,7 +1,7 @@
 services:
   servidor_node_express:
     container_name: servidor_node_express
-    image: servidor_node_express:alpine
+    image: servidor_node_express:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -23,7 +23,7 @@ services:
 
   basededatos_docker:
     container_name: basededatos_docker
-    image: postgres:alpine
+    image: postgres:latest
     ports:
       - '5432:5432'
     env_file:
@@ -31,9 +31,19 @@ services:
     volumes:
       - postgres_docker_Data:/var/lib/postgresql/data
 
+  basededatos_mysql:
+    container_name: basededatos_mysql
+    image: mysql:latest
+    ports:
+      - '3306:3306'
+    env_file:
+      - .env
+    volumes:
+      - mysql_docker_Data:/var/lib/mysql
+
   servidor_ngrok_api:
     container_name: servidor_ngrok_api
-    image: ngrok/ngrok:alpine
+    image: ngrok/ngrok:latest
     restart: unless-stopped
     env_file:
       - .env
@@ -45,3 +55,4 @@ services:
 
 volumes:
   postgres_docker_Data:
+  mysql_docker_Data:
