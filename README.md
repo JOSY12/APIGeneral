@@ -20,6 +20,6 @@ en localhost:4040 se ve el ngrok
 KUBUNTU nuevo test toke
 manjaro
 
-archtest
+archtest 2
 
 gpg ps> @@@@@@@@
