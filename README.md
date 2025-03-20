@@ -10,7 +10,7 @@ gpg -c archivo_env
 
 # Descifrar
 
-gpg -d archivo_env.gpg > archivo_env
+gpg -d .env.gpg > .env
 
 # Verificar conexion ngrok para test locales
 
