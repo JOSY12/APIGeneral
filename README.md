@@ -12,14 +12,12 @@ gpg -c archivo_env
 
 gpg -d .env.gpg > .env
 
+npm install
+docker compose up
+
 # Verificar conexion ngrok para test locales
 
 ngrok http 3000
 en localhost:4040 se ve el ngrok
-
-KUBUNTU nuevo test toke
-manjaro
-
-archtest 2
 
 gpg ps> @@@@@@@@
