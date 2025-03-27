@@ -1,10 +1,10 @@
 import Express from 'express'
 import cors from 'cors'
-import { basedatospostgres } from './db.js'
+import { basedatospostgres } from './Postgres.js'
 // import { sincronisacion } from './EcomerseUno/models/Relaciones_Sincronisacion.js'
 import morgan from 'morgan'
 import fastcheckout from './Fastcheckout/routes/fastcheckout.js'
-import sena_index from './sena/routes/sena_index.js'
+import sena_index from './Sena/Routes/Sena_index.js'
 import 'dotenv/config'
 // import { usuarios } from './EcomerseUno/models/usuarios.js'
 
@@ -29,7 +29,7 @@ servidor.use(
     credentials: true
   })
 )
-
+console.log(DEPLOY)
 servidor.use(Express.json({ limit: '50mb' }))
 
 servidor.use('/fastcheckout', fastcheckout)

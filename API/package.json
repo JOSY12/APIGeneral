@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node --watch index.js",
+    "dev": "node --watch Servidor_Express.js",
     "start": "node index.js"
   },
   "author": "josmer bertel calle",

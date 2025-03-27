@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import rutasusuarios from './rutas_usuarios.js'
+import rutasusuarios from './Rutas_usuarios.js'
 
 const sena_index = Router()
 
