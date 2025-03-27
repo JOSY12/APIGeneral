@@ -1,6 +1,6 @@
 import { basedatospostgres } from '../../BDPostgres.js'
 //se crea el usuarios segun sun datos
-export const crear_usuario = async (req, res) => {
+export const crear_usuarios = async (req, res) => {
   const { nombre, email, edad, claveacceso } = req.body
   //ya esta validado en la base de datos
   //verifica que los datos enviados existan o se rechaza la peticion
