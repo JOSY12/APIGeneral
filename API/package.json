@@ -2,11 +2,11 @@
   "name": "api",
   "version": "1.0.0",
   "description": "",
-  "main": "Servidor_express.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node --watch Servidor_express.js",
-    "start": "node Servidor_express.js"
+    "dev": "node --watch index.js",
+    "start": "node index.js"
   },
   "author": "Josmer bertel calle",
   "license": "ISC",
