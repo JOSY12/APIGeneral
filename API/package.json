@@ -17,7 +17,8 @@
     "jsonwebtoken": "^9.0.2",
     "mercadopago": "^2.0.9",
     "pg": "^8.11.5",
-    "stripe": "^15.7.0"
+    "stripe": "^15.7.0",
+    "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "morgan": "^1.10.0"
