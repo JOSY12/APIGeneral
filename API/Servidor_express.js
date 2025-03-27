@@ -3,7 +3,7 @@ import cors from 'cors'
 import { basedatospostgres } from './BDPostgres.js'
 import morgan from 'morgan'
 import fastcheckout from './Fastcheckout/routes/fastcheckout.js'
-import senaindex from './Sena/Routes/Senaindex.js'
+import senaindex from './Sena/Routes/Index_sena.js'
 import 'dotenv/config'
 
 const PORT = process.env.PORT
