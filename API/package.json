@@ -2,7 +2,7 @@
   "name": "api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "servidor.js",
   "type": "module",
   "scripts": {
     "dev": "node --watch servidor.js",
