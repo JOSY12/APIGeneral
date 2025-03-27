@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch Servidor_Express.js",
-    "start": "node index.js"
+    "start": "node Servidor_Express.js"
   },
   "author": "josmer bertel calle",
   "license": "ISC",
