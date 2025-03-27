@@ -1,9 +1,9 @@
 import Express from 'express'
 import cors from 'cors'
-import { basedatospostgres } from './Postgres.js'
+import { basedatospostgres } from './BDPostgres.js'
 import morgan from 'morgan'
 import fastcheckout from './Fastcheckout/routes/fastcheckout.js'
-import sena_index from './Sena/Routes/Sena_index.js'
+import senaindex from './Sena/Routes/Senaindex.js'
 import 'dotenv/config'
 
 const PORT = process.env.PORT
@@ -31,7 +31,7 @@ console.log(DEPLOY)
 servidor.use(Express.json({ limit: '50mb' }))
 
 servidor.use('/fastcheckout', fastcheckout)
-servidor.use('/sena', sena_index)
+servidor.use('/sena', senaindex)
 
 servidor.get('/', (req, res) => {
   res.send(
