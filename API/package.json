@@ -2,13 +2,13 @@
   "name": "api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "Servidor_Express.js",
   "type": "module",
   "scripts": {
-    "dev": "node --watch index.js",
-    "start": "node index.js"
+    "dev": "node --watch Servidor_Express.js",
+    "start": "node Servidor_Express.js"
   },
-  "author": "Josmerbertelcalle",
+  "author": "Josmer bertel calle",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",

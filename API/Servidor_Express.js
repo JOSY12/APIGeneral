@@ -1,12 +1,10 @@
 import Express from 'express'
 import cors from 'cors'
 import { basedatospostgres } from './Postgres.js'
-// import { sincronisacion } from './EcomerseUno/models/Relaciones_Sincronisacion.js'
 import morgan from 'morgan'
 import fastcheckout from './Fastcheckout/routes/fastcheckout.js'
 import sena_index from './Sena/Routes/Sena_index.js'
 import 'dotenv/config'
-// import { usuarios } from './EcomerseUno/models/usuarios.js'
 
 const PORT = process.env.PORT
 const DEPLOY = process.env.DEPLOY
@@ -44,17 +42,9 @@ servidor.get('/', (req, res) => {
 })
 
 try {
-  // await basedatos.query('CREATE SCHEMA IF NOT EXISTS ecomerseuno;')
-  // await basedatos.query('CREATE SCHEMA IF NOT EXISTS sena;')
-
-  await basedatospostgres.query('CREATE SCHEMA IF NOT EXISTS ecomerseuno;')
+  // await basedatospostgres.query('CREATE SCHEMA IF NOT EXISTS ecomerseuno;')
   await basedatospostgres.query('CREATE SCHEMA IF NOT EXISTS sena;')
 
-  // sincronisacion.forEach(modelo => {
-  //   modelo.sync({ force: false }).then(() => {
-  //     console.log(`modelo ${modelo.name} sincronizado   `)
-  //   })
-  // })
   servidor.listen(PORT, () => {
     console.log(
       `conectado a basedatos: ${process.env.POSTGRES_DOCKER} `,
