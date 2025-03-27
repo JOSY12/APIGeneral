@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node --watch ServidorExpress.js",
-    "start": "node ServidorExpress.js"
+    "dev": "node --watch index.js",
+    "start": "node index.js"
   },
   "author": "Josmer bertel calle",
   "license": "ISC",
