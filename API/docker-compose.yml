@@ -1,58 +1,57 @@
+# se aclara la version por si se requiere algo en particular
+# version: '3.8'
+# creo el servicio de node y abro servidor en puerto 3000 usando los datos .env y depende de la base de datos docker postgresql
+# conectado a la red local de docker networks:redlocal
+# depende de que postgres see inicie primero para poder concetarse al servidor
 services:
   servidor_node_express:
     container_name: servidor_node_express
-    image: servidor_node_express:alpine
     build:
       context: .
       dockerfile: Dockerfile
-
     volumes:
       - .:/usr/src/app
-
     ports:
       - '3000:3000'
-
     env_file:
       - .env
-
-    links:
-      - servidor_ngrok_api
-      - basededatos_docker
     depends_on:
       - basededatos_docker
+    networks:
+      - redlocal
 
+  # se crea la imagen de postgres en los puerto predeterminados
+  # y se usan los datos de conexion del .env se conecta a la red local de docker predeterminada
+  #  y crea el voluemn de postgres
   basededatos_docker:
     container_name: basededatos_docker
-    image: postgres:latest
+    # remover la colation en UPDATE pg_database SET datcollversion = NULL WHERE datname = 'postgres,template1';
+    image: postgres:alpine
     ports:
       - '5432:5432'
     env_file:
       - .env
     volumes:
       - postgres_docker_Data:/var/lib/postgresql/data
-
-  # basededatos_mysql:
-  #   container_name: basededatos_mysql
-  #   image: mysql:latest
-  #   ports:
-  #     - '3306:3306'
-  #   env_file:
-  #     - .env
-  #   volumes:
-  #     - mysql_docker_Data:/var/lib/mysql
-
+    networks:
+      - redlocal
+  # uso ngrok para compartir servidor y probarlo en internet usando el key de ngrok privado
   servidor_ngrok_api:
     container_name: servidor_ngrok_api
     image: ngrok/ngrok:alpine
     restart: unless-stopped
     env_file:
       - .env
-    command: start --all --config /etc/ngrok.yml
+    command: http servidor_node_express:3000
     ports:
-      - 4040:4040
-    volumes:
-      - ./ngrok.yml:/etc/ngrok.yml
+      - '4040:4040'
+    networks:
+      - redlocal
+    depends_on:
+      - servidor_node_express
 
 volumes:
   postgres_docker_Data:
-  # mysql_docker_Data:
+
+networks:
+  redlocal:

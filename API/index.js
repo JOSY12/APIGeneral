@@ -27,7 +27,7 @@ servidor.use(
     credentials: true
   })
 )
-console.log(DEPLOY)
+
 servidor.use(Express.json({ limit: '50mb' }))
 
 servidor.use('/fastcheckout', fastcheckout)

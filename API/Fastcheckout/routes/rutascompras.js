@@ -1,12 +1,12 @@
 import { Router } from 'express'
 import {
-  comprarmercadopago,
+  // comprarmercadopago,
   comprarstripe,
   verificarpagos
 } from '../controllers/controllerscompras.js'
 const rutascompras = Router()
 
-rutascompras.post('/mercadopago', comprarmercadopago)
+// rutascompras.post('/mercadopago', comprarmercadopago)
 rutascompras.post('/stripe', comprarstripe)
 rutascompras.post('/pagos', verificarpagos)
 
