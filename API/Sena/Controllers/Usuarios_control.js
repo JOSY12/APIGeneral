@@ -4,17 +4,7 @@ export const crear_usuarios = async (req, res) => {
   const { nombre, email, edad, claveacceso } = req.body
   //ya esta validado en la base de datos
   //verifica que los datos enviados existan o se rechaza la peticion
-  if (
-    nombre.trim().length <= 0 ||
-    email.trim().length <= 0 ||
-    !nombre ||
-    !email ||
-    !edad ||
-    edad < 18 ||
-    edad > 100 ||
-    !claveacceso ||
-    claveacceso.trim().length <= 0
-  ) {
+  if (!nombre || !email || !edad || edad < 18 || edad > 100 || !claveacceso) {
     return res.status(400).json({
       error: 'Faltan campos',
       detalles: {
@@ -64,7 +54,12 @@ export const todos_usuarios = async (req, res) => {
     const { rows } = await DBPostgres.query(
       'SELECT id,nombre,edad,email FROM sena.usuarios;'
     )
-
+    console.log(rows)
+    if (!rows.length) {
+      return res
+        .status(404)
+        .json({ error: 'no existen usuarios en la base de datos' })
+    }
     return res.status(200).json({ Usuarios: rows })
   } catch (error) {
     return res.status(500).json({
@@ -77,9 +72,13 @@ export const borrar_usuarios = async (req, res) => {
   const { id } = req.params
   try {
     const { rows } = await DBPostgres.query(
-      'delete from sena.usuarios where id $1',
+      'delete from sena.usuarios where id = $1 returning id',
       [id]
     )
+
+    if (!rows.length) {
+      return res.status(404).json({ error: 'usuario no encontrado' })
+    }
 
     return res.status(200).json({ Borrado: rows })
   } catch (error) {
@@ -90,13 +89,19 @@ export const borrar_usuarios = async (req, res) => {
 }
 
 export const Actualizar_usuarios = async (req, res) => {
-  const { id, nombre, edad, email, claveacceso } = req.body
+  const { nombre, edad, email, claveacceso } = req.body
+  const { id } = req.params
   try {
     const { rows } = await DBPostgres.query(
-      `UPDATE  sena.usuarios SET nombre = '$1', edad = $3 ,email = '$3', claveacceso = '$4' WHERE id = $5
-`,
+      `UPDATE sena.usuarios 
+       SET nombre = $1, edad = $2, email = $3, claveacceso = $4 
+       WHERE id = $5 returning id `,
       [nombre, edad, email, claveacceso, id]
     )
+    console.log(rows)
+    if (!rows.length) {
+      return res.status(404).json({ error: `el usuario con ${id} no existe` })
+    }
 
     return res.status(200).json({ Actualizado: rows })
   } catch (error) {
@@ -114,6 +119,9 @@ export const perfil_usuarios = async (req, res) => {
       [id]
     )
 
+    if (!rows.length) {
+      return res.status(404).json({ Perfil: 'perfil no encontrado' })
+    }
     return res.status(200).json({ Perfil: rows })
   } catch (error) {
     return res.status(500).json({
@@ -123,14 +131,41 @@ export const perfil_usuarios = async (req, res) => {
 }
 
 export const inciarsesion_usuarios = async (req, res) => {
-  const { id, claveacceso } = req.body
+  const { email, claveacceso } = req.body
+  console.log(email, claveacceso)
   try {
-    const { rows } = await DBPostgres.query(
-      `select * from sena.usuarios where id = $1 and claveacceso = '$2'`,
-      [id, claveacceso]
+    const existe = await DBPostgres.query(
+      `select * from sena.usuarios where email = $1 `,
+      [email]
     )
+    if (!existe.rows.length) {
+      return res.status(404).json({ error: 'el usuarios no existe' })
+    }
 
-    return res.status(200).json({ Usuario: rows })
+    if (existe.rows[0].email && claveacceso) {
+      const { rows } = await DBPostgres.query(
+        `select * from sena.usuarios where email = $1 and claveacceso = $2`,
+        [email, claveacceso]
+      )
+
+      if (rows.length) {
+        return res.status(200).json({ Usuario: rows })
+      } else {
+        return res.status(404).json({ error: 'clave o correo incorrectos' })
+      }
+    }
+  } catch (error) {
+    return res.status(500).json({
+      errores: error
+    })
+  }
+}
+
+export const Cerrar_sesion = async (req, res) => {
+  const { email, claveacceso } = req.body
+  console.log(email, claveacceso)
+  try {
+    // se borra todo los datos temporales de la pagina por seguridad del usuarios
   } catch (error) {
     return res.status(500).json({
       errores: error
