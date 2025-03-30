@@ -28,7 +28,7 @@ export const crear_usuarios = async (req, res) => {
 
   try {
     //      1. Verificar si el usuario existe por medio de subconsulta (con parámetros seguros)
-    const usuarioExistente = await basedatospostgres.query(
+    const usuarioExistente = await DBPostgres.query(
       ' select exists( SELECT email FROM sena.usuarios WHERE email = $1) ',
       [email]
     )
@@ -37,7 +37,7 @@ export const crear_usuarios = async (req, res) => {
     }
 
     // 2. Insertar usuario (con parámetros seguros)
-    const { rows } = await basedatospostgres.query(
+    const { rows } = await DBPostgres.query(
       `INSERT INTO sena.usuarios (nombre, email, edad, claveacceso) 
        VALUES ($1, $2, $3, $4) RETURNING id`,
       [nombre.trim() ?? '', email.trim() ?? '', edad, claveacceso.trim() ?? '']
@@ -61,7 +61,7 @@ export const crear_usuarios = async (req, res) => {
 
 export const todos_usuarios = async (req, res) => {
   try {
-    const { rows } = await basedatospostgres.query(
+    const { rows } = await DBPostgres.query(
       'SELECT id,nombre,edad,email FROM sena.usuarios;'
     )
 
@@ -74,9 +74,9 @@ export const todos_usuarios = async (req, res) => {
 }
 
 export const borrar_usuarios = async (req, res) => {
-  const { id } = req.body
+  const { id } = req.params
   try {
-    const { rows } = await basedatospostgres.query(
+    const { rows } = await DBPostgres.query(
       'delete from sena.usuarios where id $1',
       [id]
     )
@@ -92,7 +92,7 @@ export const borrar_usuarios = async (req, res) => {
 export const Actualizar_usuarios = async (req, res) => {
   const { id, nombre, edad, email, claveacceso } = req.body
   try {
-    const { rows } = await basedatospostgres.query(
+    const { rows } = await DBPostgres.query(
       `UPDATE  sena.usuarios SET nombre = '$1', edad = $3 ,email = '$3', claveacceso = '$4' WHERE id = $5
 `,
       [nombre, edad, email, claveacceso, id]
@@ -107,9 +107,9 @@ export const Actualizar_usuarios = async (req, res) => {
 }
 
 export const perfil_usuarios = async (req, res) => {
-  const { id } = req.body
+  const { id } = req.params
   try {
-    const { rows } = await basedatospostgres.query(
+    const { rows } = await DBPostgres.query(
       `select * from sena.usuarios where id = $1`,
       [id]
     )
@@ -125,7 +125,7 @@ export const perfil_usuarios = async (req, res) => {
 export const inciarsesion_usuarios = async (req, res) => {
   const { id, claveacceso } = req.body
   try {
-    const { rows } = await basedatospostgres.query(
+    const { rows } = await DBPostgres.query(
       `select * from sena.usuarios where id = $1 and claveacceso = '$2'`,
       [id, claveacceso]
     )

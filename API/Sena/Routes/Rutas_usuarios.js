@@ -15,7 +15,7 @@ rutasusuarios.post('/crear', crear_usuarios)
 rutasusuarios.get('/usuarios', todos_usuarios)
 
 rutasusuarios
-  .route(':id')
+  .route('/:id')
   .get(perfil_usuarios)
   .put(Actualizar_usuarios)
   .delete(borrar_usuarios)
