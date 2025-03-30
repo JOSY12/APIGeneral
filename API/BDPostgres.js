@@ -6,6 +6,6 @@ const URLBASEDEDATOS =
     ? process.env.URL_BASEDEDATOS_POSTGRES
     : process.env.URL_BASEDEDATOS_DOCKER
 
-export const basedatospostgres = new Pool({
+export const DBPostgres = new Pool({
   connectionString: URLBASEDEDATOS
 })

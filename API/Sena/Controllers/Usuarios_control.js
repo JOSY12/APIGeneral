@@ -1,4 +1,4 @@
-import { basedatospostgres } from '../../BDPostgres.js'
+import { DBPostgres } from '../../BDPostgres.js'
 //se crea el usuarios segun sun datos
 export const crear_usuarios = async (req, res) => {
   const { nombre, email, edad, claveacceso } = req.body

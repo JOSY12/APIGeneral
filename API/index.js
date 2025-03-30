@@ -1,6 +1,6 @@
 import Express from 'express'
 import cors from 'cors'
-import { basedatospostgres } from './BDPostgres.js'
+import { DBPostgres } from './BDPostgres.js'
 import morgan from 'morgan'
 import fastcheckout from './Fastcheckout/routes/fastcheckout.js'
 import senaindex from './Sena/Routes/Index_sena.js'
@@ -43,7 +43,7 @@ servidor.get('/', (req, res) => {
 
 try {
   // await basedatospostgres.query('CREATE SCHEMA IF NOT EXISTS ecomerseuno;')
-  await basedatospostgres.query('CREATE SCHEMA IF NOT EXISTS sena;')
+  await DBPostgres.query('CREATE SCHEMA IF NOT EXISTS sena;')
 
   servidor.listen(PORT, () => {
     console.log(
