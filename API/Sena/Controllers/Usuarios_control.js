@@ -65,7 +65,72 @@ export const todos_usuarios = async (req, res) => {
       'SELECT id,nombre,edad,email FROM sena.usuarios;'
     )
 
-    return res.status(200).json({ usuarios: rows })
+    return res.status(200).json({ Usuarios: rows })
+  } catch (error) {
+    return res.status(500).json({
+      errores: error
+    })
+  }
+}
+
+export const borrar_usuarios = async (req, res) => {
+  const { id } = req.body
+  try {
+    const { rows } = await basedatospostgres.query(
+      'delete from sena.usuarios where id $1',
+      [id]
+    )
+
+    return res.status(200).json({ Borrado: rows })
+  } catch (error) {
+    return res.status(500).json({
+      errores: error
+    })
+  }
+}
+
+export const Actualizar_usuarios = async (req, res) => {
+  const { id, nombre, edad, email, claveacceso } = req.body
+  try {
+    const { rows } = await basedatospostgres.query(
+      `UPDATE  sena.usuarios SET nombre = '$1', edad = $3 ,email = '$3', claveacceso = '$4' WHERE id = $5
+`,
+      [nombre, edad, email, claveacceso, id]
+    )
+
+    return res.status(200).json({ Actualizado: rows })
+  } catch (error) {
+    return res.status(500).json({
+      errores: error
+    })
+  }
+}
+
+export const perfil_usuarios = async (req, res) => {
+  const { id } = req.body
+  try {
+    const { rows } = await basedatospostgres.query(
+      `select * from sena.usuarios where id = $1`,
+      [id]
+    )
+
+    return res.status(200).json({ Perfil: rows })
+  } catch (error) {
+    return res.status(500).json({
+      errores: error
+    })
+  }
+}
+
+export const inciarsesion_usuarios = async (req, res) => {
+  const { id, claveacceso } = req.body
+  try {
+    const { rows } = await basedatospostgres.query(
+      `select * from sena.usuarios where id = $1 and claveacceso = '$2'`,
+      [id, claveacceso]
+    )
+
+    return res.status(200).json({ Usuario: rows })
   } catch (error) {
     return res.status(500).json({
       errores: error

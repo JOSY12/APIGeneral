@@ -1,7 +1,10 @@
 import { Router } from 'express'
 
 import {
+  Actualizar_usuarios,
+  borrar_usuarios,
   crear_usuarios,
+  perfil_usuarios,
   todos_usuarios
 } from '../Controllers/Usuarios_control.js'
 
@@ -11,11 +14,10 @@ rutasusuarios.post('/crear', crear_usuarios)
 //obtiene todos los usuarios sin contrasena
 rutasusuarios.get('/usuarios', todos_usuarios)
 
-//rutas con peticion :id
-// rutasusuarios
-//   .route(':id')
-//   .get(perfil_usuarios)
-//   .put(actualizar_usuarios)
-//   .delete(borrar_usuarios)
+rutasusuarios
+  .route(':id')
+  .get(perfil_usuarios)
+  .put(Actualizar_usuarios)
+  .delete(borrar_usuarios)
 
 export default rutasusuarios
