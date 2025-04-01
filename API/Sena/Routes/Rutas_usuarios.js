@@ -3,9 +3,9 @@ import { Router } from 'express'
 import {
   Actualizar_usuarios,
   borrar_usuarios,
-  Cerrar_sesion,
+  // Cerrar_sesion,
   crear_usuarios,
-  inciarsesion_usuarios,
+  // inciarsesion_usuarios,
   perfil_usuarios,
   todos_usuarios
 } from '../Controllers/Usuarios_control.js'
@@ -22,7 +22,7 @@ rutasusuarios
   .put(Actualizar_usuarios)
   .delete(borrar_usuarios)
 
-rutasusuarios.post('/login', inciarsesion_usuarios)
-rutasusuarios.post('/logout', Cerrar_sesion)
+// rutasusuarios.post('/login', inciarsesion_usuarios)
+// rutasusuarios.post('/logout', Cerrar_sesion)
 
 export default rutasusuarios

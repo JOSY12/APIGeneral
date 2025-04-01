@@ -52,7 +52,7 @@ export const crear_usuarios = async (req, res) => {
 export const todos_usuarios = async (req, res) => {
   try {
     const { rows } = await DBPostgres.query(
-      'SELECT id,nombre,edad,email FROM sena.usuarios;'
+      'SELECT id,nombre,email FROM sena.usuarios;'
     )
     console.log(rows)
     if (!rows.length) {
