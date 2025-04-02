@@ -1,51 +1,46 @@
 import { DBPostgres } from '../../BDPostgres.js'
 //se crea el usuarios segun sun datos
 export const crear_usuarios = async (req, res) => {
-  const { nombre, email, edad, claveacceso } = req.body
+  let { sub, name, email } = req.body
+
+  let id = sub
+  let nombre = name
+
+  console.log(id, nombre, email)
   //ya esta validado en la base de datos
   //verifica que los datos enviados existan o se rechaza la peticion
-  if (!nombre || !email || !edad || edad < 18 || edad > 100 || !claveacceso) {
+  if (!nombre || !email || !id) {
     return res.status(400).json({
-      error: 'Faltan campos',
-      detalles: {
-        nombre: !nombre.trim() ?? '' ? 'Falta nombre valido' : 'OK',
-        email: !email.trim() ?? '' ? 'Falta email valido' : 'OK',
-        edad: !edad || edad < 18 || edad > 100 ? 'Falta edad valida' : 'OK',
-        claveacceso: !claveacceso.trim() ?? '' ? 'Falta clave valida' : 'OK'
-      }
+      Error: 'Faltan campos'
     })
   }
 
   try {
     //      1. Verificar si el usuario existe por medio de subconsulta (con parámetros seguros)
     const usuarioExistente = await DBPostgres.query(
-      ' select exists( SELECT email FROM sena.usuarios WHERE email = $1) ',
-      [email]
+      ' select exists( SELECT email FROM sena.usuarios WHERE id = $1 and email = $2) ',
+      [id, email]
     )
+
     if (usuarioExistente.rows[0].exists) {
-      return res.status(400).json({ error: 'El email ya está registrado' })
+      return res.status(400).json({ Existe: 'El email ya está registrado' })
     }
 
     // 2. Insertar usuario (con parámetros seguros)
     const { rows } = await DBPostgres.query(
-      `INSERT INTO sena.usuarios (nombre, email, edad, claveacceso) 
-       VALUES ($1, $2, $3, $4) RETURNING id`,
-      [nombre.trim() ?? '', email.trim() ?? '', edad, claveacceso.trim() ?? '']
+      `INSERT INTO sena.usuarios (id, nombre,email ) 
+       VALUES ($1, $2 ,$3) RETURNING id`,
+      [id, nombre, email]
     )
+    // 3. Crear carrito y favoritos (en paralelo)
 
-    // 3. Crear carrito y favoritos (en paralelo, como lo tenías)
-    await Promise.all([
-      basedatospostgres.query('INSERT INTO sena.carritos (id) VALUES ($1)', [
-        rows[0].id
-      ]),
-      basedatospostgres.query('INSERT INTO sena.favoritos (id) VALUES ($1)', [
-        rows[0].id
-      ])
+    await DBPostgres.query(`INSERT INTO sena.Carritos (id) VALUES ($1)`, [
+      rows[0].id
     ])
 
-    return res.status(200).json('Usuario insertado correctamente')
+    return res.status(200).json({ Exito: rows[0].id })
   } catch (error) {
-    return res.status(500).json({ errores: error })
+    return res.status(500).json({ Error: error })
   }
 }
 
@@ -113,6 +108,7 @@ export const Actualizar_usuarios = async (req, res) => {
 
 export const perfil_usuarios = async (req, res) => {
   const { id } = req.params
+
   try {
     const { rows } = await DBPostgres.query(
       `select * from sena.usuarios where id = $1`,
