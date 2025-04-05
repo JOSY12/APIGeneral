@@ -211,3 +211,13 @@ export const borrar_usuarios_admin = async (req, res) => {
     })
   }
 }
+
+export const tost = async (req, res) => {
+  try {
+    return res.status(200).json({ exito: 'exito' })
+  } catch (error) {
+    return res.status(500).json({
+      errores: error
+    })
+  }
+}
