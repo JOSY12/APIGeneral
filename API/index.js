@@ -32,12 +32,7 @@ const corsOptions = {
   credentials: true
 }
 
-// servidor.use(
-//   cors({
-//     origin: DEPLOY,
-//     credentials: true
-//   })
-// )
+servidor.use(cors(corsOptions))
 // configuracion para multiples peticiones
 
 servidor.use(Express.json({ limit: '50mb' }))
