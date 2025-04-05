@@ -39,7 +39,7 @@ const corsOptions = {
 //   })
 // )
 
-// servidor.use(cors(corsOptions))
+servidor.use(cors(corsOptions))
 // configuracion para multiples peticiones
 
 servidor.use(Express.json({ limit: '50mb' }))
