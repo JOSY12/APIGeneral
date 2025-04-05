@@ -21,9 +21,14 @@ servidor.use(
 servidor.use(morgan('dev'))
 servidor.use(Express.urlencoded({ extended: true, limit: '50mb' }))
 
+const misrutas = [
+  'https://fast-checkout.vercel.app',
+  'https://proyecto-techsells.vercel.app'
+]
+
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || DEPLOY.includes(origin)) {
+    if (!origin || misrutas.includes(origin)) {
       callback(null, true)
     } else {
       callback(new Error('No permitido por CORS'))
