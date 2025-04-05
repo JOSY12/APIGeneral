@@ -21,14 +21,9 @@ servidor.use(
 servidor.use(morgan('dev'))
 servidor.use(Express.urlencoded({ extended: true, limit: '50mb' }))
 
-const misrutas = [
-  'https://fast-checkout.vercel.app',
-  'https://proyecto-techsells.vercel.app'
-]
-
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || misrutas.includes(origin)) {
+    if (!origin || DEPLOY.includes(origin)) {
       callback(null, true)
     } else {
       callback(new Error('No permitido por CORS'))
@@ -48,7 +43,9 @@ servidor.use('/sena', senaindex)
 servidor.get('/', (req, res) => {
   res.send(
     `<div style="background-color: black; color: #59ff50; font-size: 2em; display: flex; justify-content: center; align-items: center; height: 100vh;">
-      Servidor en linea y activo , Conectado a base de datos : ${process.env.POSTGRES_DOCKER}
+      Servidor en linea y activo , Conectado a base de datos : ${
+        process.env.POSTGRES_DOCKER
+      }, en las siguientes rutas${misrutas.map(e => e)}
     </div>`
   )
 })
