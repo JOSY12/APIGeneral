@@ -168,3 +168,46 @@ export const Cerrar_sesion = async (req, res) => {
     })
   }
 }
+
+export const Actualizar_usuarios_admin = async (req, res) => {
+  const { nombre, edad, email, claveacceso } = req.body
+  const { id } = req.params
+  try {
+    const { rows } = await DBPostgres.query(
+      `UPDATE sena.usuarios 
+       SET nombre = $1, edad = $2, email = $3, claveacceso = $4 
+       WHERE id = $5 returning id `,
+      [nombre, edad, email, claveacceso, id]
+    )
+    console.log(rows)
+    if (!rows.length) {
+      return res.status(404).json({ error: `el usuario con ${id} no existe` })
+    }
+
+    return res.status(200).json({ Actualizado: rows })
+  } catch (error) {
+    return res.status(500).json({
+      errores: error
+    })
+  }
+}
+
+export const borrar_usuarios_admin = async (req, res) => {
+  const { id } = req.params
+  try {
+    const { rows } = await DBPostgres.query(
+      'delete from sena.usuarios where id = $1 returning id',
+      [id]
+    )
+
+    if (!rows.length) {
+      return res.status(404).json({ error: 'usuario no encontrado' })
+    }
+
+    return res.status(200).json({ Borrado: rows })
+  } catch (error) {
+    return res.status(500).json({
+      errores: error
+    })
+  }
+}
