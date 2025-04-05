@@ -21,23 +21,23 @@ servidor.use(
 servidor.use(morgan('dev'))
 servidor.use(Express.urlencoded({ extended: true, limit: '50mb' }))
 
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     if (!origin || DEPLOY.includes(origin)) {
-//       callback(null, true)
-//     } else {
-//       callback(new Error('No permitido por CORS'))
-//     }
-//   },
-//   credentials: true
-// }
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || DEPLOY.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error('No permitido por CORS'))
+    }
+  },
+  credentials: true
+}
 
-servidor.use(
-  cors({
-    origin: 'https://fast-checkout.vercel.app',
-    credentials: true
-  })
-)
+// servidor.use(
+//   cors({
+//     origin: DEPLOY,
+//     credentials: true
+//   })
+// )
 
 // servidor.use(cors(corsOptions))
 // configuracion para multiples peticiones
@@ -50,8 +50,14 @@ servidor.use('/sena', senaindex)
 servidor.get('/', (req, res) => {
   res.send(
     `<div style="background-color: black; color: #59ff50; font-size: 2em; display: flex; justify-content: center; align-items: center; height: 100vh;">
-      Servidor en linea y activo , Conectado a base de datos : ${process.env.POSTGRES_DOCKER}, en las siguientes rutas  ${DEPLOY}
-    </div>`
+      Servidor en linea y activo , Conectado a base de datos : ${process.env.POSTGRES_DOCKER},
+    </div>
+    
+    <div style="background-color: black; color: #59ff50; font-size: 2em; display: flex; justify-content: center; align-items: center; height: 100vh;">
+    Rutas activas ${DEPLOY}
+    </div>
+
+    `
   )
 })
 

@@ -95,8 +95,8 @@ export const comprarstripe = async (req, res) => {
       // shipping_address_collection: {
       //   allowed_countries: ['US']
       // },
-      success_url: `${process.env.DEPLOY}/exito`,
-      cancel_url: `${process.env.DEPLOY}/fallo`
+      success_url: `https://fast-checkout.vercel.app/exito`,
+      cancel_url: `https://fast-checkout.vercel.app/fallo`
       // customer_email: 'test_user_123@testuser.com'
     })
     res.status(200).json(comprastripe.url)
