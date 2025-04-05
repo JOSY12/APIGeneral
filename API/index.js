@@ -47,18 +47,17 @@ servidor.use(Express.json({ limit: '50mb' }))
 servidor.use('/fastcheckout', fastcheckout)
 servidor.use('/sena', senaindex)
 
-servidor.get('/', (req, res) => {
-  res.send(
-    `<div style="background-color: black; color: #59ff50; font-size: 2em; display: flex; justify-content: center; align-items: center; height: 100vh;">
-      Servidor en linea y activo , Conectado a base de datos : ${process.env.POSTGRES_DOCKER},
-    </div>
-    
-    <div style="background-color: black; color: #59ff50; font-size: 2em; display: flex; justify-content: center; align-items: center;  ">
-    Rutas activas ${DEPLOY}
-    </div>
+// servidor.get('/', (req, res) => {
+//   res.send()
+// })
 
-    `
-  )
+servidor.use(Express.static('public'))
+
+servidor.get('/info', (req, res) => {
+  res.json({
+    db: process.env.POSTGRES_DOCKER,
+    deploy: process.env.DEPLOY || 'No especificado'
+  })
 })
 
 try {
