@@ -1,6 +1,5 @@
 import PagosStripe from '../../MercadoPago_Stripe.js'
 import { v4 as uuidv4 } from 'uuid'
-const DEPLOY = process.env.DEPLOY
 const SECRETO = process.env.STRIPE_WEBHOOK_SECRET
 // export const comprarmercadopago = async (req, res) => {
 //   const { compras } = req.body
@@ -86,6 +85,7 @@ export const comprarstripe = async (req, res) => {
         })
       }
     }
+    const origin = req.headers.origin
 
     const comprastripe = await PagosStripe.checkout.sessions.create({
       line_items: comprando,
@@ -96,8 +96,8 @@ export const comprarstripe = async (req, res) => {
       // shipping_address_collection: {
       //   allowed_countries: ['US']
       // },
-      success_url: `${DEPLOY[1]}/exito`,
-      cancel_url: `${DEPLOY[1]}/fallo`
+      success_url: `${origin}/exito`,
+      cancel_url: `${origin}/fallo`
       // customer_email: 'test_user_123@testuser.com'
     })
     res.status(200).json(comprastripe.url)
