@@ -21,18 +21,25 @@ servidor.use(
 servidor.use(morgan('dev'))
 servidor.use(Express.urlencoded({ extended: true, limit: '50mb' }))
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || DEPLOY.includes(origin)) {
-      callback(null, true)
-    } else {
-      callback(new Error('No permitido por CORS'))
-    }
-  },
-  credentials: true
-}
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     if (!origin || DEPLOY.includes(origin)) {
+//       callback(null, true)
+//     } else {
+//       callback(new Error('No permitido por CORS'))
+//     }
+//   },
+//   credentials: true
+// }
 
-servidor.use(cors(corsOptions))
+servidor.use(
+  cors({
+    origin: 'https://fast-checkout.vercel.app',
+    credentials: true
+  })
+)
+
+// servidor.use(cors(corsOptions))
 // configuracion para multiples peticiones
 
 servidor.use(Express.json({ limit: '50mb' }))
