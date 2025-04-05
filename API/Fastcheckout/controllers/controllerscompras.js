@@ -1,5 +1,6 @@
 import PagosStripe from '../../MercadoPago_Stripe.js'
 import { v4 as uuidv4 } from 'uuid'
+const DEPLOY = process.env.DEPLOY
 const SECRETO = process.env.STRIPE_WEBHOOK_SECRET
 // export const comprarmercadopago = async (req, res) => {
 //   const { compras } = req.body
@@ -95,8 +96,8 @@ export const comprarstripe = async (req, res) => {
       // shipping_address_collection: {
       //   allowed_countries: ['US']
       // },
-      success_url: `https://fast-checkout.vercel.app/exito`,
-      cancel_url: `https://fast-checkout.vercel.app/fallo`
+      success_url: `${DEPLOY[1]}/exito`,
+      cancel_url: `${DEPLOY[1]}/fallo`
       // customer_email: 'test_user_123@testuser.com'
     })
     res.status(200).json(comprastripe.url)

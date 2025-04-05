@@ -21,25 +21,25 @@ servidor.use(
 servidor.use(morgan('dev'))
 servidor.use(Express.urlencoded({ extended: true, limit: '50mb' }))
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || DEPLOY.includes(origin)) {
-      callback(null, true)
-    } else {
-      callback(new Error('No permitido por CORS'))
-    }
-  },
-  credentials: true
-}
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     if (!origin || DEPLOY.includes(origin)) {
+//       callback(null, true)
+//     } else {
+//       callback(new Error('No permitido por CORS'))
+//     }
+//   },
+//   credentials: true
+// }
 
-// servidor.use(
-//   cors({
-//     origin: DEPLOY,
-//     credentials: true
-//   })
-// )
+servidor.use(
+  cors({
+    origin: DEPLOY,
+    credentials: true
+  })
+)
 
-servidor.use(cors(corsOptions))
+// servidor.use(cors(corsOptions))
 // configuracion para multiples peticiones
 
 servidor.use(Express.json({ limit: '50mb' }))
@@ -53,7 +53,7 @@ servidor.get('/', (req, res) => {
       Servidor en linea y activo , Conectado a base de datos : ${process.env.POSTGRES_DOCKER},
     </div>
     
-    <div style="background-color: black; color: #59ff50; font-size: 2em; display: flex; justify-content: center; align-items: center; height: 100vh;">
+    <div style="background-color: black; color: #59ff50; font-size: 2em; display: flex; justify-content: center; align-items: center;  ">
     Rutas activas ${DEPLOY}
     </div>
 
