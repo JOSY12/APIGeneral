@@ -1,5 +1,4 @@
-import PagosStripe from '../../MercadoPago_Stripe.js'
-import { v4 as uuidv4 } from 'uuid'
+import PagosStripe from '../../Stripe.js'
 const SECRETO = process.env.STRIPE_WEBHOOK_SECRET
 // export const comprarmercadopago = async (req, res) => {
 //   const { compras } = req.body
@@ -125,19 +124,19 @@ export const verificarpagos = async (req, res) => {
 
     PagosStripe.checkout.sessions
       .retrieve(checkoutSessionCompleted.id)
-      .then(session => {
+      .then((session) => {
         console.log(`Session detail:`, session)
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(`Error retrieving session:`, err)
       })
 
     PagosStripe.checkout.sessions
       .listLineItems(checkoutSessionCompleted.id)
-      .then(lineItems => {
+      .then((lineItems) => {
         console.log(`listLineItems items:`, lineItems)
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(`Error listing line items:`, err)
       })
   } else {
