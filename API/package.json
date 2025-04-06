@@ -11,6 +11,8 @@
   "author": "Josmer bertel calle",
   "license": "ISC",
   "dependencies": {
+    "@clerk/clerk-sdk-node": "^5.1.6",
+    "@clerk/express": "^1.4.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
