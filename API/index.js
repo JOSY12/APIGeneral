@@ -5,7 +5,12 @@ import morgan from 'morgan'
 import fastcheckout from './Fastcheckout/routes/fastcheckout.js'
 import senaindex from './Sena/Routes/Index_sena.js'
 import 'dotenv/config'
-import { clerkMiddleware, clerkClient } from '@clerk/express'
+import {
+  clerkMiddleware,
+  clerkClient,
+  requireAuth,
+  getAuth
+} from '@clerk/express'
 const PORT = process.env.PORT
 const DEPLOY = process.env.DEPLOY
 const servidor = Express()
@@ -31,27 +36,31 @@ const corsOptions = {
   credentials: true
 }
 servidor.use(clerkMiddleware())
-
 servidor.use(cors(corsOptions))
-// configuracion para multiples peticiones
-
-// servidor.use(
-//   cors({
-//     origin: DEPLOY,
-//     credentials: true
-//   })
-// )
-
 servidor.use(Express.json({ limit: '50mb' }))
 
 servidor.use('/fastcheckout', fastcheckout)
 servidor.use('/sena', senaindex)
 
-// servidor.get('/', (req, res) => {
-//   res.send()
-// })
+servidor.get('/sena/privada', requireAuth(), async (req, res) => {
+  const { userId } = getAuth(req)
+  try {
+    const usuario = await clerkClient.users.getUser(userId)
 
-// servidor.use(Express.static('public'))
+    // const update = await clerkClient.users.updateUserMetadata(userId, {
+    //   publicMetadata: {
+    //     admin: true
+    //   }
+    // })
+    // console.log(update)
+    console.log(usuario)
+
+    if (userId) return res.status(200).json({ user: usuario })
+  } catch (error) {
+    return res.status(500).json({ error: 'no autorizado' })
+  }
+})
+
 servidor.get('/', (req, res) => {
   res.send(`
 <!DOCTYPE html>
