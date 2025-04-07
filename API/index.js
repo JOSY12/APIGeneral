@@ -5,7 +5,7 @@ import morgan from 'morgan'
 import fastcheckout from './Fastcheckout/routes/fastcheckout.js'
 import senaindex from './Sena/Routes/Index_sena.js'
 import 'dotenv/config'
-import { ClerkExpressWithAuth } from '@clerk/express'
+import { clerkMiddleware, clerkClient } from '@clerk/express'
 const PORT = process.env.PORT
 const DEPLOY = process.env.DEPLOY
 const servidor = Express()
@@ -20,7 +20,6 @@ servidor.use(
 
 servidor.use(morgan('dev'))
 servidor.use(Express.urlencoded({ extended: true, limit: '50mb' }))
-servidor.use(ClerkExpressWithAuth())
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || DEPLOY.includes(origin)) {
@@ -31,6 +30,7 @@ const corsOptions = {
   },
   credentials: true
 }
+servidor.use(clerkMiddleware())
 
 servidor.use(cors(corsOptions))
 // configuracion para multiples peticiones
