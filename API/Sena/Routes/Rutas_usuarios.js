@@ -7,8 +7,8 @@ import {
   crear_usuarios,
   // inciarsesion_usuarios,
   perfil_usuarios,
-  todos_usuarios,
-  tost
+  todos_usuarios
+  // tost
 } from '../Controllers/Usuarios_control.js'
 
 const rutasusuarios = Router()
@@ -16,7 +16,7 @@ const rutasusuarios = Router()
 rutasusuarios.post('/crear', crear_usuarios)
 //obtiene todos los usuarios sin contrasena
 rutasusuarios.get('/usuarios', todos_usuarios)
-rutasusuarios.get('/tost', tost)
+// rutasusuarios.get('/tost', tost)
 
 rutasusuarios
   .route('/perfil/:id')

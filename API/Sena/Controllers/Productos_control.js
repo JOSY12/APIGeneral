@@ -1,4 +1,4 @@
-import { DBPostgres } from '../../BDPostgres'
+import { DBPostgres } from '../../BDPostgres.js'
 
 export const agregar_producto = async (req, res) => {
   const { nombre, precio, cantidad, estado, stock, descripcion } = req.body

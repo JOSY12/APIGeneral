@@ -11,17 +11,13 @@ import {
   requireAuth,
   getAuth
 } from '@clerk/express'
+import clerkwebhook from './Sena/Routes/ClerkWebhook.js'
 const PORT = process.env.PORT
 const DEPLOY = process.env.DEPLOY
 const servidor = Express()
 
-servidor.use(
-  Express.json({
-    verify: (req, res, buf) => {
-      req.rawBody = buf
-    }
-  })
-)
+servidor.use(Express.json({ limit: '50mb' }))
+servidor.use(Express.urlencoded({ extended: true, limit: '50mb' }))
 
 servidor.use(morgan('dev'))
 servidor.use(Express.urlencoded({ extended: true, limit: '50mb' }))
@@ -37,40 +33,10 @@ const corsOptions = {
 }
 servidor.use(clerkMiddleware())
 servidor.use(cors(corsOptions))
-servidor.use(Express.json({ limit: '50mb' }))
 
 servidor.use('/fastcheckout', fastcheckout)
 servidor.use('/sena', senaindex)
-
-servidor.get('/sena/privada', requireAuth(), async (req, res) => {
-  const { userId } = getAuth(req)
-  try {
-    const usuario = await clerkClient.users.getUser(userId)
-
-    // const update = await clerkClient.users.updateUserMetadata(userId, {
-    //   publicMetadata: {
-    //     admin: true
-    //   }
-    // })
-    // console.log(update)
-    console.log(usuario)
-
-    if (userId) return res.status(200).json({ user: usuario })
-  } catch (error) {
-    return res.status(500).json({ error: 'no autorizado' })
-  }
-})
-
-servidor.get('/sena/publica', async (req, res) => {
-  const { userId } = getAuth(req)
-  try {
-    const usuario = await clerkClient.users.getUser(userId)
-
-    if (userId) return res.status(200).json({ user: usuario })
-  } catch (error) {
-    return res.status(500).json({ error: 'no autorizado' })
-  }
-})
+servidor.use('/webhookclerk', clerkwebhook)
 
 servidor.get('/', (req, res) => {
   res.send(`
