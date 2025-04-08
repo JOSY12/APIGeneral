@@ -61,6 +61,17 @@ servidor.get('/sena/privada', requireAuth(), async (req, res) => {
   }
 })
 
+servidor.get('/sena/publica', async (req, res) => {
+  const { userId } = getAuth(req)
+  try {
+    const usuario = await clerkClient.users.getUser(userId)
+
+    if (userId) return res.status(200).json({ user: usuario })
+  } catch (error) {
+    return res.status(500).json({ error: 'no autorizado' })
+  }
+})
+
 servidor.get('/', (req, res) => {
   res.send(`
 <!DOCTYPE html>
