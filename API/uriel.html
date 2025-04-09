@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test de Proyectos uriel</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body class="bg-blue-900">
+    <!-- comienza el recargar -->
+
+    <!-- termina el recargar -->
+    <div class="container mx-auto">
+      <!--titulo -->
+      <h1 class="text-4xl flex justify-center mt-10 text-white font-bold mb-4">
+        Test botones Wifi
+      </h1>
+      <h1
+        id="cargando"
+        class="text-4xl flex justify-center mt-10 text-white font-bold mb-4"
+      ></h1>
+      <!-- contenedor general de botones -->
+      <div
+        id="contenedorbotones"
+        class="bg-black rounded-2xl grid lg:grid-cols-2 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 text-white"
+      ></div>
+    </div>
+  </body>
+
+  <script>
+    const actualizardatos = async ({ encendido, id }) => {
+      try {
+        const enviarpeticion = await axios.put('/uriel/actualizar', {
+          encendido,
+          id
+        })
+      } catch (error) {
+        console.error('Error en la petición:', error)
+      }
+      api()
+    }
+
+    const api = async () => {
+      try {
+        const datos = await axios.get('/uriel/datos')
+
+        const contenedor = document.getElementById('contenedorbotones')
+        const cargando = document.getElementById('cargando')
+
+        if (!datos.data.length)
+          cargando.innerText = 'no hay contenido que mostrar'
+        if (datos.data.length) cargando.innerText = ''
+        contenedor.innerHTML = datos.data
+          .map((e, k) => {
+            return `
+      <div class="p-4">
+        <button 
+          class= "${
+            e.encendido === 1 ? 'bg-green-500' : 'bg-red-600'
+          }  cursor-pointer p-4 rounded-lg text-center w-full" 
+          onclick="actualizardatos({ encendido: '${
+            e.encendido === 1 ? 0 : 1
+          }', id: '${e.id}' })"
+        >
+          <span class="text-xl text-center font-medium">LED ${e.id}</span>
+        </button>
+        <p id="btn1estado" class="text-lg text-center mt-2">
+        LED.Estado: ${e.encendido}  ${
+              e.encendido === 1 ? 'encendido' : 'apagado'
+            }
+        </p>
+      </div>
+    `
+          })
+          .join('')
+      } catch (error) {
+        console.error('Error al hacer fetch:', error)
+      }
+    }
+    api()
+
+    const agregarled = async () => {
+      const crear = await axios.post()
+    }
+  </script>
+</html>

@@ -5,6 +5,7 @@ import morgan from 'morgan'
 import fastcheckout from './Fastcheckout/routes/fastcheckout.js'
 import senaindex from './Sena/Routes/Index_sena.js'
 import 'dotenv/config'
+import path from 'path'
 import {
   clerkMiddleware,
   clerkClient,
@@ -12,6 +13,8 @@ import {
   getAuth
 } from '@clerk/express'
 import clerkwebhook from './Sena/Routes/ClerkWebhook.js'
+import { error } from 'console'
+import rutasuriel from './Uriel/Rurtasesp32.js'
 const PORT = process.env.PORT
 const DEPLOY = process.env.DEPLOY
 const servidor = Express()
@@ -20,7 +23,6 @@ servidor.use(Express.json({ limit: '50mb' }))
 servidor.use(Express.urlencoded({ extended: true, limit: '50mb' }))
 
 servidor.use(morgan('dev'))
-servidor.use(Express.urlencoded({ extended: true, limit: '50mb' }))
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || DEPLOY.includes(origin)) {
@@ -37,6 +39,11 @@ servidor.use(cors(corsOptions))
 servidor.use('/fastcheckout', fastcheckout)
 servidor.use('/sena', senaindex)
 servidor.use('/webhookclerk', clerkwebhook)
+
+servidor.get('/uriel', (req, res) => {
+  res.sendFile('./uriel.html', { root: '.' })
+})
+servidor.use('/uriel', rutasuriel)
 
 servidor.get('/', (req, res) => {
   res.send(`
@@ -87,7 +94,7 @@ servidor.get('/', (req, res) => {
         <div class="p-4 h-[calc(100%-40px)] text-white font-mono text-xl bg-black overflow-y-auto">
           <p class="pb-2">ApiGeneral [Versión 4]</p>
           <p class="pb-2">&nbsp;</p>
-          <p class="pb-2">V:\Usuarios\Josmer></p>
+          <p class="pb-2">V:/Usuarios/Josmer></p>
                     <p class="pb-2" id="deploy">estado del servidor: activo
 
           <p class="pb-2" id="db">Conectado a base de datos: ${process.env.POSTGRES_DOCKER}</p>
@@ -99,10 +106,14 @@ servidor.get('/', (req, res) => {
 </html>
   `)
 })
+servidor.get('*', (req, res) => {
+  res.sendFile('./404.html', { root: '.' })
+})
 
 try {
   // await basedatospostgres.query('CREATE SCHEMA IF NOT EXISTS ecomerseuno;')
   await DBPostgres.query('CREATE SCHEMA IF NOT EXISTS sena;')
+  await DBPostgres.query('CREATE SCHEMA IF NOT EXISTS uriel;')
 
   servidor.listen(PORT, () => {
     console.log(
