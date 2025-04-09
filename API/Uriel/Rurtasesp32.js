@@ -39,7 +39,6 @@ rutasuriel.delete(`/borrarpin/:id`, async (req, res) => {
       'DELETE FROM uriel.acciones	WHERE id = $1',
       [id]
     )
-    console.log(borrado)
     if (id) return res.status(200).json({ id: id }) // Respuesta correcta con el código de estado y el objeto
   } catch (error) {
     return res.status(500).json({ datos: 'error de peticion' })

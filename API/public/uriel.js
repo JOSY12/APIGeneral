@@ -11,7 +11,7 @@ const actualizardatos = async ({ encendido, id }) => {
 }
 const borrarpin = async (id) => {
   const borrado = await axios.delete(`/uriel/borrarpin/${id}`)
-  console.log(borrado)
+
   api()
 }
 const api = async () => {
@@ -54,7 +54,7 @@ const api = async () => {
       })
       .join('')
   } catch (error) {
-    console.error('Error al hacer fetch:', error)
+    return 'Error al hacer fetch:', error
   }
 }
 api()
