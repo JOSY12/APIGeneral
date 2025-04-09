@@ -51,10 +51,51 @@ servidor.get('/uriel', (req, res) => {
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   </head>
-  <body class="bg-blue-900">
-    <!-- comienza el recargar -->
+  <body class="bg-black">
+    <!-- comienza el agregar -->
+<div class="relative">
+  <!-- Botón para abrir el modal -->
+  <button class="z-20 cursor-pointer text-white flex flex-col shrink-0 grow-0 justify-around 
+                  fixed bottom-0 right-0 right-5 rounded-lg
+                  mr-1 mb-5 lg:mr-5 lg:mb-5 xl:mr-10 xl:mb-10" onclick="openModal()">
+    <div class="p-3 rounded-full border-4 border-white bg-green-600">
+      <svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <circle opacity="0.5" cx="12" cy="12" r="10" stroke="#000000" stroke-width="1.5"></circle>
+          <path d="M15 12L12 12M12 12L9 12M12 12L12 9M12 12L12 15" stroke="#000000" stroke-width="1.5" stroke-linecap="round"></path>
+        </g>
+      </svg>
+    </div>
+  </button>
 
-    <!-- termina el recargar -->
+  <!-- Modal -->
+  <div id="myModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-white p-6 rounded-lg w-96">
+      <h2 class="text-2xl  text-center   mb-4">Agregar pin esp32</h2>
+      <form id="modalForm" onsubmit="submitForm(event)">
+        <div class="mb-4">
+          <label for="gpio" class="block text-sm font-medium text-gray-700">GPIO:</label>
+          <input type="number" max=30 min=1 id="gpio" name="gpio" class="mt-1 block w-full border-gray-300 rounded-md" required>
+        </div>
+
+        <div class="mb-4">
+          <label for="encendido" class="block text-sm font-medium text-gray-700">Encendido:</label>
+          <input type="number" max=1 min=0 id="encendido" name="encendido" class="mt-1 block w-full border-gray-300 rounded-md" required>
+        </div>
+    <span id="spanerror" class="bg-black text-red-500 text-2xl" > </span>
+        <button type="submit" class="mt-4 bg-blue-500 text-white p-2 rounded-lg w-full">Guardar</button>
+      </form>
+      <button onclick="closeModal()" class="mt-4 bg-red-500 text-white p-2 rounded-lg w-full">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+ 
+
+
+    <!-- termina el agregar -->
     <div class="container mx-auto">
       <!--titulo -->
       <h1 class="text-4xl flex justify-center mt-10 text-white font-bold mb-4">
