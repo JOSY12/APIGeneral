@@ -2,7 +2,7 @@ import { DBPostgres } from '../BDPostgres.js'
 
 import { Router } from 'express'
 const rutasuriel = Router()
-
+// [] cambie el localhost en deploy si algo no sirve recolocarlo
 rutasuriel.get('/datos', async (req, res) => {
   try {
     const botones = await DBPostgres.query(

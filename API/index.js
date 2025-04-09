@@ -35,13 +35,47 @@ const corsOptions = {
 }
 servidor.use(clerkMiddleware())
 servidor.use(cors(corsOptions))
+servidor.use(Express.static('public'))
 
 servidor.use('/fastcheckout', fastcheckout)
 servidor.use('/sena', senaindex)
 servidor.use('/webhookclerk', clerkwebhook)
-
 servidor.get('/uriel', (req, res) => {
-  res.sendFile('./uriel.html', { root: '.' })
+  res.send(`
+    <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test de Proyectos uriel</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body class="bg-blue-900">
+    <!-- comienza el recargar -->
+
+    <!-- termina el recargar -->
+    <div class="container mx-auto">
+      <!--titulo -->
+      <h1 class="text-4xl flex justify-center mt-10 text-white font-bold mb-4">
+        Test botones Wifi
+      </h1>
+      <h1
+        id="cargando"
+        class="text-4xl flex justify-center mt-10 text-white font-bold mb-4"
+      ></h1>
+      <!-- contenedor general de botones -->
+      <div
+        id="contenedorbotones"
+        class="bg-black rounded-2xl grid lg:grid-cols-2 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 text-white"
+      ></div>
+    </div>
+  </body>
+
+<script src="/uriel.js"></script>
+
+</html>
+`)
 })
 servidor.use('/uriel', rutasuriel)
 
