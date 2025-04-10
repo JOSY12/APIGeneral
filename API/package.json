@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node --watch index.js",
-    "start": "node index.js"
+    "dev": "bun --watch index.js",
+    "start": "bun index.js"
   },
   "author": "Josmer bertel calle",
   "license": "ISC",
