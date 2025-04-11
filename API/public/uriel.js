@@ -44,16 +44,16 @@ const api = async () => {
   <div class="p-4 grid">
   <div class="grid grid-cols-3 ">
  
-   <span class="text-xl text-center bg-green-600 rounded-tl-2xl col-span-2 font-medium">GPIO ${
-     e.id
-   }</span>
+   <span class="text-xl text-center ${
+     e.encendido === 1 ? 'bg-green-600' : 'bg-red-600'
+   } rounded-tl-2xl col-span-2 font-medium">GPIO ${e.id}</span>
 
     <button onclick="borrarpin(${
       e.id
     })" class="bg-red-500 rounded-tr-2xl cursor-pointer text-2xl">
       Borrar
     </button>
-     <select class="p=2 bg-purple-500  rounded col-span-3  text-white" "
+     <select class="p=2 bg-blue-600 font-bold   rounded col-span-3  text-white" "
   onchange="handleSelect(this, ${e.id})"
   data-encendido="${e.encendido}"
   data-blink="${e.blink}"
@@ -68,7 +68,7 @@ const api = async () => {
 </select>
   </div>
 
-  <p class="bg-blue-600 text-center rounded-bl-2xl rounded-br-2xl text-lg ">
+  <p class="bg-purple-600 text-white font-bold text-center rounded-bl-2xl rounded-br-2xl text-lg ">
     GPIO ${e.id} - Encendido: ${e.encendido} | Blink: ${e.blink}
   </p>
 </div>

@@ -71,21 +71,21 @@ servidor.get('/uriel', (req, res) => {
   </button>
 
   <!-- Modal -->
-  <div id="myModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center hidden">
+  <div id="myModal" class="fixed inset-0 bg-black  flex justify-center items-center hidden">
     <div class="bg-white p-6 rounded-lg w-96">
-      <h2 class="text-2xl  text-center   mb-4">Agregar pin esp32</h2>
+      <h2 class="text-2xl  text-center   mb-4">Agregar GPIO de esp32</h2>
       <form id="modalForm" onsubmit="submitForm(event)">
         <div class="mb-4">
-          <label for="gpio" class="block text-sm font-medium text-gray-700">GPIO:</label>
+          <label for="gpio" class="block text-xl font-medium text-gray-700">GPIO:</label>
           <input type="number" max=30 min=1 id="gpio" name="gpio" class="mt-1 block w-full border-gray-300 rounded-md" required>
         </div>
 
         <div class="mb-4">
-          <label for="encendido" class="block text-sm font-medium text-gray-700">Encendido:</label>
+          <label for="encendido" class="block text-xl font-medium text-gray-700">Encendido:</label>
           <input type="number" max=1 min=0 id="encendido" name="encendido" class="mt-1 block w-full border-gray-300 rounded-md" required>
         </div>
     <span id="spanerror" class="bg-black text-red-500 text-2xl" > </span>
-        <button type="submit" class="mt-4 bg-blue-500 text-white p-2 rounded-lg w-full">Guardar</button>
+        <button type="submit" class="mt-4 bg-green-500 text-white p-2 rounded-lg w-full">Guardar</button>
       </form>
       <button onclick="closeModal()" class="mt-4 bg-red-500 text-white p-2 rounded-lg w-full">Cerrar</button>
     </div>
