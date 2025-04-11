@@ -2,7 +2,6 @@ import { DBPostgres } from '../BDPostgres.js'
 
 import { Router } from 'express'
 const rutasuriel = Router()
-// [] cambie el localhost en deploy si algo no sirve recolocarlo
 rutasuriel.get('/datos', async (req, res) => {
   try {
     const botones = await DBPostgres.query(
@@ -20,11 +19,12 @@ rutasuriel.get('/datos', async (req, res) => {
 })
 
 rutasuriel.put('/actualizar', async (req, res) => {
-  const { id, encendido } = req.body
+  const { id, encendido, blink } = req.body
+  console.log(id, encendido, blink)
   try {
     const botones = await DBPostgres.query(
-      'UPDATE uriel.acciones SET encendido = $1 WHERE id = $2 RETURNING id',
-      [encendido, id]
+      'UPDATE uriel.acciones SET encendido = $1, blink = $2 WHERE id = $3',
+      [encendido, blink, id]
     )
     if (botones) return res.status(200).json(botones)
   } catch (error) {
