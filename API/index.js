@@ -5,21 +5,12 @@ import morgan from 'morgan'
 import fastcheckout from './Fastcheckout/routes/fastcheckout.js'
 import senaindex from './Sena/Routes/Index_sena.js'
 import 'dotenv/config'
-import path from 'path'
-import {
-  clerkMiddleware,
-  clerkClient,
-  requireAuth,
-  getAuth
-} from '@clerk/express'
-import clerkwebhook from './Sena/Routes/ClerkWebhook.js'
-import { error } from 'console'
 import rutasuriel from './Uriel/Rurtasesp32.js'
+import stripewebhook from './Sena/Routes/StripeWebhook.js'
 const PORT = process.env.PORT
 const DEPLOY = process.env.DEPLOY
 const servidor = Express()
 
-servidor.use(Express.json({ limit: '50mb' }))
 servidor.use(Express.urlencoded({ extended: true, limit: '50mb' }))
 
 servidor.use(morgan('dev'))
@@ -33,13 +24,19 @@ const corsOptions = {
   },
   credentials: true
 }
-servidor.use(clerkMiddleware())
 servidor.use(cors(corsOptions))
-servidor.use(Express.static('public'))
+// servidor.use(Express.static('public'))
+
+servidor.use(
+  '/sena/stripe',
+  Express.raw({ type: 'application/json' }),
+  stripewebhook
+)
+// webhook para stripe express raw recibe formato raw y no json luego se convierte a json
+servidor.use(Express.json({ limit: '50mb' }))
 
 servidor.use('/fastcheckout', fastcheckout)
 servidor.use('/sena', senaindex)
-servidor.use('/webhookclerk', clerkwebhook)
 servidor.get('/uriel', (req, res) => {
   res.send(`
     <!DOCTYPE html>

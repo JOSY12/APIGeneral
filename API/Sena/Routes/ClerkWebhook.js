@@ -1,9 +1,8 @@
-import { getAuth } from '@clerk/express'
-import e, { Router } from 'express'
+import { Router } from 'express'
 
 const clerkwebhook = Router()
 
-clerkwebhook.post('/', async (req, res) => {
+clerkwebhook.post('/webhook', async (req, res) => {
   const evento = req.body
 
   const { id, email_addresses, first_name, last_name } = evento.data
