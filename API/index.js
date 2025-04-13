@@ -185,7 +185,7 @@ servidor.get('*', (req, res) => {
 try {
   // await basedatospostgres.query('CREATE SCHEMA IF NOT EXISTS ecomerseuno;')
   await DBPostgres.query('CREATE SCHEMA IF NOT EXISTS sena;')
-  await DBPostgres.query('CREATE SCHEMA IF NOT EXISTS uriel;')
+  // await DBPostgres.query('CREATE SCHEMA IF NOT EXISTS uriel;')
 
   servidor.listen(PORT, () => {
     console.log(

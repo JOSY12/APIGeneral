@@ -1,4 +1,5 @@
 import { DBPostgres } from '../../BDPostgres.js'
+import { clerkClient, requireAuth, getAuth } from '@clerk/express'
 //se crea el usuarios segun sun datos
 export const crear_usuarios = async (req, res) => {
   let { id, name, email } = req.body
