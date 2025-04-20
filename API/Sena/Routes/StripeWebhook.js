@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import PagosStripe from '../../Stripe.js'
+import PagosStripe from '../../Stripe'
 const secreto = process.env.STRIPE_WEBHOOK_SECRET
 const stripewebhook = Router()
 
