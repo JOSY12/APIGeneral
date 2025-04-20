@@ -1,5 +1,5 @@
-import e, { Router } from 'express'
-import { DBPostgres } from '../../BDPostgres'
+import { Router } from 'express'
+import { DBPostgres } from '../../BDPostgres.js'
 import { clerkClient } from '@clerk/express'
 
 const clerkwebhook = Router()
