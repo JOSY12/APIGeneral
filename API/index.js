@@ -7,6 +7,7 @@ import senaindex from './Sena/Routes/Index_sena.js'
 import 'dotenv/config'
 // import rutasuriel from './Uriel/Rurtasesp32.js'
 import stripewebhook from './Sena/Routes/StripeWebhook.js'
+import { clerkMiddleware } from '@clerk/express'
 const PORT = process.env.PORT
 const DEPLOY = process.env.DEPLOY
 const servidor = Express()
@@ -27,6 +28,7 @@ const corsOptions = {
 servidor.use(cors(corsOptions))
 // servidor.use(Express.static('public'))
 
+// debe ser la primera ruta para evitar que el el body se convierta a json y no se pueda leer el body
 servidor.use(
   '/sena/stripe',
   Express.raw({ type: 'application/json' }),
@@ -34,8 +36,9 @@ servidor.use(
 )
 // webhook para stripe express raw recibe formato raw y no json luego se convierte a json
 servidor.use(Express.json({ limit: '50mb' }))
-
 servidor.use('/fastcheckout', fastcheckout)
+servidor.use(clerkMiddleware())
+
 servidor.use('/sena', senaindex)
 // servidor.get('/uriel', (req, res) => {
 //   res.send(`
@@ -180,7 +183,6 @@ servidor.get('/', (req, res) => {
 // })
 
 try {
-  // await basedatospostgres.query('CREATE SCHEMA IF NOT EXISTS ecomerseuno;')
   await DBPostgres.query('CREATE SCHEMA IF NOT EXISTS sena;')
   // await DBPostgres.query('CREATE SCHEMA IF NOT EXISTS uriel;')
 
