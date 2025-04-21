@@ -8,13 +8,13 @@ clerkwebhook.post('/webhook', async (req, res) => {
   const evento = req.body
   console.log(evento.type)
   const { id, email_addresses, first_name } = evento.data
-
   if (evento) {
     try {
       const usuario = await DBPostgres.query(
         'SELECT * FROM sena.usuarios WHERE id = $1',
         [id]
       )
+      console.log('usuario:', usuario.rows)
 
       switch (evento.type) {
         case 'user.created':
@@ -26,6 +26,7 @@ clerkwebhook.post('/webhook', async (req, res) => {
             'INSERT INTO sena.usuarios (id, email, nombre) VALUES ($1, $2, $3) returning id',
             [id, email_addresses[0].email_address, first_name]
           )
+          console.log('creado:', creado.rows)
           if (creado.rows.length) {
             // inserta el carrito dentro del usuario
             await DBPostgres.query(
@@ -34,8 +35,7 @@ clerkwebhook.post('/webhook', async (req, res) => {
             )
             // inserta los atributos del usuario
             await DBPostgres.query(
-              `INSERT INTO sena.AtributosUsuarios (id,administrador,baneado) values($1,FALSE,FALSE)
- `,
+              `INSERT INTO sena.AtributosUsuarios (id,administrador,baneado) values($1,FALSE,FALSE)`,
               [id]
             )
             await clerkClient.users.updateUserMetadata(id, {
@@ -47,6 +47,8 @@ clerkwebhook.post('/webhook', async (req, res) => {
           }
 
           if (!creado.rows.length) {
+            console.log({ error: 'Usuario no se creo correctamente', creado })
+
             return res.status(500).json({ error: 'error al crear el usuario' })
           }
           console.log('Usuario creado:', id)
