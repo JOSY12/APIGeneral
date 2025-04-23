@@ -1,40 +1,39 @@
 import { DBPostgres } from '../../BDPostgres.js'
 import { clerkClient, getAuth } from '@clerk/express'
 //se crea el usuarios segun sun datos
-export const crear_usuarios = async (req, res) => {
-  let { id, name, email } = req.body
-  //verifica que los datos enviados existan o se rechaza la peticion
-  if (!id || !name || !email) {
-    return res.status(400).json({
-      Error: 'Faltan campos'
-    })
-  }
-  //verifica que el usuario no exista
-  const existe = await DBPostgres.query(
-    `select * from sena.usuarios where email = $1 `,
-    [email]
-  )
-  if (existe.rows.length) {
-    return res.status(400).json({ error: 'el usuarios ya existe' })
-  }
+// export const crear_usuarios = async (req, res) => {
+//   let { id, name, email, imagen } = req.body
+//   //verifica que los datos enviados existan o se rechaza la peticion
+//   if (!id || !name || !email) {
+//     return res.status(400).json({
+//       Error: 'Faltan campos'
+//     })
+//   }
+//   //verifica que el usuario no exista
+//   const existe = await DBPostgres.query(
+//     `select * from sena.usuarios where email = $1 `,
+//     [email]
+//   )
+//   if (existe.rows.length) {
+//     return res.status(400).json({ error: 'el usuarios ya existe' })
+//   }
 
-  try {
-    const nuevoUsuario = await DBPostgres.query(
-      `INSERT INTO sena.usuarios (id, nombre, email) VALUES ($1, $2, $3) RETURNING id`,
-      [id, name, email]
-    )
-    return res.status(201).json({ id: nuevoUsuario.rows[0].id })
-  } catch (error) {
-    return res.status(500).json({ Error: error })
-  }
-}
+//   try {
+//     const nuevoUsuario = await DBPostgres.query(
+//       `INSERT INTO sena.usuarios (id, nombre, email) VALUES ($1, $2, $3) RETURNING id`,
+//       [id, name, email]
+//     )
+//     return res.status(201).json({ id: nuevoUsuario.rows[0].id })
+//   } catch (error) {
+//     return res.status(500).json({ Error: error })
+//   }
+// }
 
 export const todos_usuarios = async (req, res) => {
   try {
     const { rows } = await DBPostgres.query(
-      'SELECT id,nombre,email FROM sena.usuarios;'
+      'SELECT u.id,u.nombre,au.rol,au.baneado,au.administrador,u.foto_perfil FROM sena.usuarios u left JOIN sena.Atributos_usuarios au on u.id =  au.id;'
     )
-    console.log(rows)
     if (!rows.length) {
       return res
         .status(404)
@@ -239,7 +238,7 @@ export const borrar_usuarios_admin = async (req, res) => {
 
 export const privada = async (req, res) => {
   const { userId } = getAuth(req)
-  console.log(userId)
+  console.log({ id: userId })
   try {
     const user = await clerkClient.users.getUser(userId)
     if (!user) {
@@ -251,4 +250,25 @@ export const privada = async (req, res) => {
       errores: error
     })
   }
+}
+
+export const notificaciones = async (req, res) => {
+  const { userId } = getAuth(req)
+  console.log(userId)
+  if (userId) {
+    try {
+      const { rows } = await DBPostgres.query(
+        `SELECT id,  usuario_id, titulo,descripcion, visto, to_char(fecha_creacion, 'DD/MM/YYYY HH12:MI:SS') AS fecha_creacion FROM sena.notificaciones WHERE usuario_id = $1`,
+        [userId]
+      )
+      console.log(rows)
+      if (rows) {
+        console.log(rows)
+        return res.status(200).json({ rows })
+      }
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
 }

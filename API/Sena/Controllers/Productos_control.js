@@ -172,3 +172,19 @@ export const eliminar_producto = async (req, res) => {
     })
   }
 }
+
+export const cloudinary = async (req, res) => {
+  const { userId } = getAuth(req)
+  console.log(userId)
+  try {
+    const user = await clerkClient.users.getUser(userId)
+    if (!user) {
+      return res.status(404).json({ error: 'usuario no encontrado' })
+    }
+    return res.status(200).json({ user })
+  } catch (error) {
+    return res.status(500).json({
+      errores: error
+    })
+  }
+}

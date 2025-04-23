@@ -6,8 +6,10 @@ const clerkwebhook = Router()
 
 clerkwebhook.post('/webhook', async (req, res) => {
   const evento = req.body
-  console.log(evento.type)
-  const { id, email_addresses, first_name } = evento.data
+  console.log({ evento: evento.type })
+  const { id, email_addresses, first_name, image_url, last_name, username } =
+    evento.data
+
   if (evento) {
     try {
       const usuario = await DBPostgres.query(
@@ -22,8 +24,15 @@ clerkwebhook.post('/webhook', async (req, res) => {
             return res.status(400).json({ error: 'Usuario ya existe' })
           }
           const creado = await DBPostgres.query(
-            'INSERT INTO sena.usuarios (id, email, nombre) VALUES ($1, $2, $3) returning id',
-            [id, email_addresses[0].email_address, first_name]
+            'INSERT INTO sena.usuarios (id, email, nombre,foto_perfil,apellido,apodo) VALUES ($1, $2, $3, $4,$5,$6) returning id',
+            [
+              id,
+              email_addresses[0].email_address,
+              first_name,
+              image_url,
+              last_name,
+              username === null ? first_name : username
+            ]
           )
           if (!creado.rows.length) {
             console.log({ error: 'Usuario no se creo correctamente', creado })
@@ -36,18 +45,35 @@ clerkwebhook.post('/webhook', async (req, res) => {
               `insert into sena.Carritos (id) values($1)`,
               [id]
             )
+
             // inserta los atributos del usuario
             await DBPostgres.query(
-              `INSERT INTO sena.AtributosUsuarios (id,administrador,baneado) values($1,FALSE,FALSE)`,
+              `INSERT INTO sena.Atributos_usuarios (id) values($1)`,
               [id]
             )
-            await clerkClient.users.updateUserMetadata(id, {
-              publicMetadata: {
-                administrador: false,
-                baneado: false
-              }
-            })
-            console.log('Usuario creado:', id)
+
+            await DBPostgres.query(
+              `INSERT INTO sena.notificaciones (usuario_id,titulo,descripcion) values($1,$2,$3)`,
+              [
+                id,
+                'Registro Techsells',
+                'Bienvenido a Techsells, tu tienda de tecnologia.'
+              ]
+            )
+            if (
+              username !== null &&
+              first_name !== 'Example' &&
+              email_addresses[0].email_address !== 'example@example.org'
+            ) {
+              await clerkClient.users.updateUserMetadata(id, {
+                publicMetadata: {
+                  administrador: false,
+                  baneado: false,
+                  rol: 'usuario'
+                }
+              })
+            }
+
             return res
               .status(200)
               .json({ message: 'Usuario creado correctamente' })
@@ -59,13 +85,36 @@ clerkwebhook.post('/webhook', async (req, res) => {
             console.log({ error: 'Usuario no existe' })
             return res.status(400).json({ error: 'Usuario no existe' })
           }
-          // await DBPostgres.query(
-          //   'UPDATE sena.usuarios SET email = $1, nombre = $2  WHERE id = $3',
-          //   [email_addresses[0].email_address, first_name, id]
-          // )
+          await DBPostgres.query(
+            'UPDATE sena.usuarios SET email = $1, nombre = $2,foto_perfil = $3,apodo = $4 , apellido = $5 WHERE id = $6',
+            [
+              email_addresses[0].email_address,
+              first_name,
+              image_url,
+              username === null ? first_name : username,
+              last_name,
+              id
+            ]
+          )
+
+          if (
+            username !== null &&
+            first_name !== 'Example' &&
+            email_addresses[0].email_address !== 'example@example.org'
+          ) {
+            await DBPostgres.query(
+              'UPDATE sena.Atributos_usuarios SET administrador = $1, baneado = $2,rol = $3 WHERE id = $4',
+              [
+                evento.data.public_metadata.administrador,
+                evento.publicMetadata.baneado,
+                evento.publicMetadata.rol,
+                id
+              ]
+            )
+          }
+
           console.log('Usuario actualizado:', evento.data)
 
-          console.log('Usuario actualizado:', actualizado)
           return res
             .status(200)
             .json({ message: 'Usuario actualizado correctamente' })
@@ -77,6 +126,8 @@ clerkwebhook.post('/webhook', async (req, res) => {
 
             return res.status(400).json({ error: 'Usuario no existe' })
           }
+          console.log(evento.data)
+
           // Eliminar el usuario de la base de datos
           // Puedes usar el ID del evento para identificar al usuario
           await DBPostgres.query('DELETE FROM sena.usuarios WHERE id = $1 ', [
