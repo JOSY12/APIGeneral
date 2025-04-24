@@ -2,7 +2,11 @@ import { Router } from 'express'
 
 import {
   Actualizar_usuarios,
+  borrar_notificacion,
+  borrar_todas_notificaciones,
   borrar_usuarios,
+  contador_notificaciones,
+  marcar_visto,
   notificaciones,
   perfil_usuarios,
   todos_usuarios
@@ -22,6 +26,14 @@ rutasusuarios
   .put(Actualizar_usuarios)
   .delete(borrar_usuarios)
 
-rutasusuarios.route('/notificaciones').get(notificaciones)
+rutasusuarios.get('/notificaciones', notificaciones)
+rutasusuarios.delete('/notificaciones/:id', borrar_notificacion)
+rutasusuarios.delete(
+  '/borrar_todas_notificaciones',
+  borrar_todas_notificaciones
+)
+
+rutasusuarios.get('/contador_notificaciones', contador_notificaciones)
+rutasusuarios.put('/marcar_visto', marcar_visto)
 
 export default rutasusuarios

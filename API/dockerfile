@@ -3,25 +3,16 @@ FROM node:alpine
 
 # Establecer el directorio de trabajo
 WORKDIR /usr/src/app
-
-# Instalar curl y bash
-RUN apk add --no-cache curl bash
-
-# Instalar bun
-RUN curl -fsSL https://bun.sh/install | bash
-
-# Asegurarse de que bun esté en el PATH
-ENV PATH="/root/.bun/bin:$PATH"
-
+ 
+ 
 # Copiar solo package.json antes de instalar dependencias
 COPY package*.json ./
-COPY bun.lock ./
 
 # Instalar dependencias con bun
-RUN bun install
+RUN npm install
 
 # Copiar el resto de los archivos después de instalar dependencias
 COPY . .
 
 # Usar el comando correcto para iniciar la app con bun
-CMD ["bun", "run", "dev"]
+CMD ["npm", "run", "dev"]

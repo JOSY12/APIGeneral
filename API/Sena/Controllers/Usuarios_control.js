@@ -31,9 +31,7 @@ import { clerkClient, getAuth } from '@clerk/express'
 
 export const todos_usuarios = async (req, res) => {
   try {
-    const { rows } = await DBPostgres.query(
-      'SELECT u.id,u.nombre,au.rol,au.baneado,au.administrador,u.foto_perfil FROM sena.usuarios u left JOIN sena.Atributos_usuarios au on u.id =  au.id;'
-    )
+    const { rows } = await DBPostgres.query('select *  from todos_usuarios')
     if (!rows.length) {
       return res
         .status(404)
@@ -254,17 +252,98 @@ export const privada = async (req, res) => {
 
 export const notificaciones = async (req, res) => {
   const { userId } = getAuth(req)
-  console.log(userId)
   if (userId) {
     try {
       const { rows } = await DBPostgres.query(
-        `SELECT id,  usuario_id, titulo,descripcion, visto, to_char(fecha_creacion, 'DD/MM/YYYY HH12:MI:SS') AS fecha_creacion FROM sena.notificaciones WHERE usuario_id = $1`,
+        `SELECT id,  usuario_id, titulo,descripcion,
+         visto, to_char(fecha_creacion, 'DD/MM/YYYY HH12:MI:SS') 
+         AS fecha_creacion FROM sena.notificaciones WHERE usuario_id
+          = $1 ORDER BY fecha_creacion desc`,
         [userId]
       )
       console.log(rows)
       if (rows) {
         console.log(rows)
         return res.status(200).json({ rows })
+      }
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}
+
+export const borrar_notificacion = async (req, res) => {
+  const { userId } = getAuth(req)
+  const { id } = req.params
+  if (userId) {
+    try {
+      const { rows } = await DBPostgres.query(
+        `DELETE FROM sena.notificaciones WHERE id = $1 AND usuario_id = $2`,
+        [id, userId]
+      )
+      console.log(rows)
+      if (rows) {
+        console.log(rows)
+        return res.status(200).json({ rows })
+      }
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}
+
+export const borrar_todas_notificaciones = async (req, res) => {
+  const { userId } = getAuth(req)
+  if (userId) {
+    try {
+      const { rows } = await DBPostgres.query(
+        `DELETE FROM sena.Notificaciones WHERE usuario_id = $1 returning id`,
+        [userId]
+      )
+      console.log(rows)
+      if (rows) {
+        console.log(rows)
+        return res.status(200).json({ rows })
+      }
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}
+
+export const contador_notificaciones = async (req, res) => {
+  const { userId } = getAuth(req)
+  if (userId) {
+    try {
+      const { rows } = await DBPostgres.query(
+        `SELECT  COUNT(visto) FILTER(WHERE visto = false) FROM sena.notificaciones WHERE usuario_id = $1  `,
+        [userId]
+      )
+      if (rows) {
+        return res.status(200).json(rows[0].count)
+      }
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}
+
+export const marcar_visto = async (req, res) => {
+  const { userId } = getAuth(req)
+
+  if (userId) {
+    try {
+      const { rows } = await DBPostgres.query(
+        `UPDATE sena.Notificaciones n SET visto = true WHERE n.usuario_id = $1 returning id `,
+        [userId]
+      )
+      console.log(rows)
+      if (rows) {
+        return res.status(200).json(rows[0].count)
       }
     } catch (error) {
       return res.status(500).json({ Error: error })
