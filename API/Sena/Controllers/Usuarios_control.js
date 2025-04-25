@@ -341,9 +341,8 @@ export const marcar_visto = async (req, res) => {
         `UPDATE sena.Notificaciones n SET visto = true WHERE n.usuario_id = $1 returning id `,
         [userId]
       )
-      console.log(rows)
       if (rows) {
-        return res.status(200).json(rows[0].count)
+        return res.status(200).json(rows)
       }
     } catch (error) {
       return res.status(500).json({ Error: error })
