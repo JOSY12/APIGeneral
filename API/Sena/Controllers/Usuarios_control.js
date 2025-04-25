@@ -30,8 +30,12 @@ import { clerkClient, getAuth } from '@clerk/express'
 // }
 
 export const todos_usuarios = async (req, res) => {
+  console.log('llega')
   try {
-    const { rows } = await DBPostgres.query('select *  from todos_usuarios')
+    const { rows } = await DBPostgres.query(
+      'select * from sena.admin_todos_usuarios'
+    )
+    console.log(rows)
     if (!rows.length) {
       return res
         .status(404)
