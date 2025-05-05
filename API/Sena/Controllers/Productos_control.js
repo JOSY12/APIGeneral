@@ -1,16 +1,30 @@
 import { DBPostgres } from '../../BDPostgres.js'
 
 export const agregar_producto = async (req, res) => {
-  const { nombre, precio, cantidad, estado, stock, descripcion } = req.body
-  if (!nombre || !precio || !cantidad || !estado || !stock || !descripcion) {
+  const { nombre, precio, estado, stock, descripcion, fotos, categorias } =
+    req.body
+
+  if (
+    !nombre ||
+    !precio ||
+    !estado ||
+    !stock ||
+    !descripcion ||
+    !fotos.length ||
+    !categorias.length
+  ) {
     return res.status(400).json({ error: 'Faltan datos' })
   }
-  if (precio < 0 || cantidad < 0 || stock < 0) {
+  if (precio < 1 || stock < 1) {
     return res
       .status(400)
       .json({ error: 'Los valores no pueden ser negativos' })
   }
-  if (estado !== 'activo' && estado !== 'inactivo') {
+  if (
+    estado !== 'Disponible' &&
+    estado !== 'Agotado' &&
+    estado !== 'Pendiente'
+  ) {
     return res.status(400).json({ error: 'Estado no valido' })
   }
   if (typeof nombre !== 'string' || typeof descripcion !== 'string') {
@@ -18,37 +32,47 @@ export const agregar_producto = async (req, res) => {
       .status(400)
       .json({ error: 'Nombre y descripcion deben ser cadenas de texto' })
   }
-  if (
-    typeof precio !== 'number' ||
-    typeof cantidad !== 'number' ||
-    typeof stock !== 'number'
-  ) {
+  if (typeof precio !== 'number' || typeof stock !== 'number') {
     return res
       .status(400)
-      .json({ error: 'Precio, cantidad y stock deben ser numeros' })
+      .json({ error: 'Precio,   y stock deben ser numeros' })
   }
-  if (nombre.length > 50) {
+  if (nombre.length > 150) {
     return res.status(400).json({ error: 'Nombre demasiado largo' })
   }
-  if (descripcion.length > 255) {
-    return res.status(400).json({ error: 'Descripcion demasiado larga' })
+  if (nombre.length < 10) {
+    return res.status(400).json({ error: 'Nombre demasiado largo' })
   }
-  if (precio > 1000000) {
+
+  if (precio > 9999) {
     return res.status(400).json({ error: 'Precio demasiado alto' })
   }
-  if (cantidad > 10000) {
-    return res.status(400).json({ error: 'Cantidad demasiado alta' })
-  }
-  if (stock > 10000) {
+
+  if (stock > 1000) {
     return res.status(400).json({ error: 'Stock demasiado alto' })
   }
+
   try {
-    const query = await DBPostgres.query(
-      'INSERT INTO productos (nombre, precio, cantidad, estado, stock, descripcion) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-      [nombre, precio, cantidad, estado, stock, descripcion]
+    const { rows } = await DBPostgres.query(
+      'INSERT INTO sena.productos (nombre, precio,  estado, stock, descripcion) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+      [nombre, precio, estado, stock, descripcion]
     )
-    const { id } = query.rows[0]
-    return res.status(200).json({ exito: 'exito', id })
+    if (rows.length) {
+      for (let f of fotos) {
+        await DBPostgres.query(
+          'INSERT INTO sena.imagenes_producto (producto_id,public_id,url) VALUES ($1, $2, $3)',
+          [rows[0].id, f.public_id, f.url]
+        )
+      }
+      for (let c of categorias) {
+        await DBPostgres.query(
+          'INSERT INTO sena.Categorias_productos (categoria_id, producto_id ) VALUES ($1, $2)',
+          [c.categoria_id, rows[0].id]
+        )
+      }
+      return res.status(200).json({ exito: 'exito', id: rows[0].id })
+    }
+    // return res.status(200).json({ exito: 'exito', id: rows.id })
   } catch (error) {
     return res.status(500).json({
       errores: error
@@ -58,12 +82,12 @@ export const agregar_producto = async (req, res) => {
 
 export const listar_productos = async (req, res) => {
   try {
-    const query = await DBPostgres.query('SELECT * FROM productos')
-    const productos = query.rows
-    if (productos.length === 0) {
+    const { rows } = await DBPostgres.query('SELECT * FROM sena.productos')
+
+    if (!rows.length) {
       return res.status(404).json({ error: 'No hay productos' })
     }
-    return res.status(200).json(productos)
+    return res.status(200).json(rows)
   } catch (error) {
     return res.status(500).json({
       errores: error
@@ -99,26 +123,24 @@ export const listar_producto = async (req, res) => {
 }
 
 export const editar_producto = async (req, res) => {
-  const { id } = req.params
-  const { nombre, precio, cantidad, estado, stock, descripcion } = req.body
+  const { id, nombre, precio, estado, stock, descripcion } = req.body
   if (!id) {
-    return res.status(400).json({ error: 'Faltan datos' })
+    return res.status(400).json({ error: 'Faltan id de producto ' })
   }
-  if (isNaN(id)) {
-    return res.status(400).json({ error: 'ID no valido' })
+
+  if (!nombre || !precio || !estado || !stock || !descripcion) {
+    return res.status(400).json({ error: 'Faltan datos para actualizar' })
   }
-  if (id < 0) {
-    return res.status(400).json({ error: 'ID no valido' })
-  }
-  if (!nombre || !precio || !cantidad || !estado || !stock || !descripcion) {
-    return res.status(400).json({ error: 'Faltan datos' })
-  }
-  if (precio < 0 || cantidad < 0 || stock < 0) {
+  if (precio < 0 || stock < 0) {
     return res
       .status(400)
       .json({ error: 'Los valores no pueden ser negativos' })
   }
-  if (estado !== 'activo' && estado !== 'inactivo') {
+  if (
+    estado !== 'Pendiente' &&
+    estado !== 'Agotado' &&
+    estado !== 'Disponible'
+  ) {
     return res.status(400).json({ error: 'Estado no valido' })
   }
   if (typeof nombre !== 'string' || typeof descripcion !== 'string') {
@@ -126,20 +148,14 @@ export const editar_producto = async (req, res) => {
       .status(400)
       .json({ error: 'Nombre y descripcion deben ser cadenas de texto' })
   }
-  if (
-    typeof precio !== 'number' ||
-    typeof cantidad !== 'number' ||
-    typeof stock !== 'number'
-  ) {
-    return res
-      .status(400)
-      .json({ error: 'Precio, cantidad y stock deben ser numeros' })
+  if (typeof precio !== 'number' || typeof stock !== 'number') {
+    return res.status(400).json({ error: 'Precio, y stock deben ser numeros' })
   }
 
   try {
     const query = await DBPostgres.query(
-      'UPDATE productos SET nombre = $1, precio = $2, cantidad = $3, estado = $4, stock = $5, descripcion = $6 WHERE id = $7',
-      [nombre, precio, cantidad, estado, stock, descripcion, id]
+      'UPDATE productos SET nombre = $1, precio = $2,  estado = $4, stock = $5, descripcion = $6 WHERE id = $7',
+      [nombre, precio, estado, stock, descripcion, id]
     )
     return res.status(200).json({ exito: 'exito' })
   } catch (error) {
@@ -154,12 +170,7 @@ export const eliminar_producto = async (req, res) => {
   if (!id) {
     return res.status(400).json({ error: 'Faltan datos' })
   }
-  if (isNaN(id)) {
-    return res.status(400).json({ error: 'ID no valido' })
-  }
-  if (id < 0) {
-    return res.status(400).json({ error: 'ID no valido' })
-  }
+
   try {
     const query = await DBPostgres.query(
       'DELETE FROM productos WHERE id = $1',
@@ -181,6 +192,65 @@ export const cloudinary = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'usuario no encontrado' })
     }
+    return res.status(200).json({ user })
+  } catch (error) {
+    return res.status(500).json({
+      errores: error
+    })
+  }
+}
+
+export const crear_categoria = async (req, res) => {
+  const { nombre } = req.body
+
+  try {
+    const { rows } = await DBPostgres.query(
+      `select * from sena.categorias where nombre like '%${nombre}'`
+    )
+    console.log(rows)
+    if (!rows.length) {
+      await DBPostgres.query(
+        'insert into sena.categorias (nombre) values($1)',
+        [nombre]
+      )
+
+      return res.status(200).json({ Exito: 'Categoria creada exitosamente' })
+    } else {
+      return res.status(400).json({ Error: 'ya existe esta categoria' })
+    }
+  } catch (error) {
+    return res.status(500).json({
+      errores: error
+    })
+  }
+}
+
+export const categorias = async (req, res) => {
+  try {
+    const { rows } = await DBPostgres.query('select * from sena.categorias')
+
+    if (!rows.length) {
+      return res.status(400).json({ error: 'no hay categorias' })
+    }
+
+    return res.status(200).json({ rows })
+  } catch (error) {
+    return res.status(500).json({
+      errores: error
+    })
+  }
+}
+
+export const borrar_categoria = async (req, res) => {
+  const { id } = req.params
+
+  try {
+    const categoria = await DBPostgres.query(
+      'DELETE FROM sena.categorias WHERE id = $1',
+      [id]
+    )
+    console.log(categoria)
+
     return res.status(200).json({ user })
   } catch (error) {
     return res.status(500).json({
