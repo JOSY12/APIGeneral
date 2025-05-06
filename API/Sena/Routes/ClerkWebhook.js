@@ -6,7 +6,6 @@ const clerkwebhook = Router()
 
 clerkwebhook.post('/webhook', async (req, res) => {
   const evento = req.body
-  console.log({ evento: evento.type })
   const { id, email_addresses, first_name, image_url, last_name, username } =
     evento.data
 
@@ -20,7 +19,6 @@ clerkwebhook.post('/webhook', async (req, res) => {
       switch (evento.type) {
         case 'user.created':
           if (usuario.rows.length) {
-            console.log({ error: 'Usuario ya existe' })
             return res.status(400).json({ error: 'Usuario ya existe' })
           }
           const creado = await DBPostgres.query(
@@ -35,8 +33,6 @@ clerkwebhook.post('/webhook', async (req, res) => {
             ]
           )
           if (!creado.rows.length) {
-            console.log({ error: 'Usuario no se creo correctamente', creado })
-
             return res.status(500).json({ error: 'error al crear el usuario' })
           }
           if (creado.rows.length) {
@@ -82,7 +78,6 @@ clerkwebhook.post('/webhook', async (req, res) => {
 
         case 'user.updated':
           if (!usuario.rows.length) {
-            console.log({ error: 'Usuario no existe' })
             return res.status(400).json({ error: 'Usuario no existe' })
           }
           await DBPostgres.query(
@@ -113,20 +108,16 @@ clerkwebhook.post('/webhook', async (req, res) => {
             )
           }
 
-          console.log('Usuario actualizado:', evento.data)
-
           return res
             .status(200)
             .json({ message: 'Usuario actualizado correctamente' })
         // finaliza la actualizacion del usuario
         case 'user.deleted':
           if (!usuario.rows.length) {
-            console.log({ error: 'Usuario no existe' })
             // Eliminar el usuario de la base de datos
 
             return res.status(400).json({ error: 'Usuario no existe' })
           }
-          console.log(evento.data)
 
           // Eliminar el usuario de la base de datos
           // Puedes usar el ID del evento para identificar al usuario
@@ -141,7 +132,6 @@ clerkwebhook.post('/webhook', async (req, res) => {
  `,
             [id]
           )
-          console.log('Usuario eliminado', id)
           return res
             .status(200)
             .json({ message: 'Usuario eliminado correctamente' })

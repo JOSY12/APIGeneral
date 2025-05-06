@@ -19,7 +19,6 @@ const rutasusuarios = Router()
 //obtiene todos los usuarios sin contrasena
 rutasusuarios.get('/usuarios', todos_usuarios)
 // rutasusuarios.get('/tost', tost)
-
 rutasusuarios
   .route('/perfil')
   .get(perfil_usuarios)

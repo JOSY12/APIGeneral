@@ -72,7 +72,9 @@ export const agregar_producto = async (req, res) => {
       }
       return res.status(200).json({ exito: 'exito', id: rows[0].id })
     }
-    // return res.status(200).json({ exito: 'exito', id: rows.id })
+    return res.status(400).json({
+      errores: error
+    })
   } catch (error) {
     return res.status(500).json({
       errores: error
@@ -186,7 +188,6 @@ export const eliminar_producto = async (req, res) => {
 
 export const cloudinary = async (req, res) => {
   const { userId } = getAuth(req)
-  console.log(userId)
   try {
     const user = await clerkClient.users.getUser(userId)
     if (!user) {
@@ -202,12 +203,10 @@ export const cloudinary = async (req, res) => {
 
 export const crear_categoria = async (req, res) => {
   const { nombre } = req.body
-
   try {
     const { rows } = await DBPostgres.query(
       `select * from sena.categorias where nombre like '%${nombre}'`
     )
-    console.log(rows)
     if (!rows.length) {
       await DBPostgres.query(
         'insert into sena.categorias (nombre) values($1)',
@@ -228,12 +227,11 @@ export const crear_categoria = async (req, res) => {
 export const categorias = async (req, res) => {
   try {
     const { rows } = await DBPostgres.query('select * from sena.categorias')
-
     if (!rows.length) {
       return res.status(400).json({ error: 'no hay categorias' })
     }
 
-    return res.status(200).json({ rows })
+    return res.status(200).json(rows)
   } catch (error) {
     return res.status(500).json({
       errores: error
@@ -249,7 +247,6 @@ export const borrar_categoria = async (req, res) => {
       'DELETE FROM sena.categorias WHERE id = $1',
       [id]
     )
-    console.log(categoria)
 
     return res.status(200).json({ user })
   } catch (error) {

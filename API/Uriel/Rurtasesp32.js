@@ -20,7 +20,6 @@ rutasuriel.get('/datos', async (req, res) => {
 
 rutasuriel.put('/actualizar', async (req, res) => {
   const { id, encendido, blink } = req.body
-  console.log(id, encendido, blink)
   try {
     const botones = await DBPostgres.query(
       'UPDATE uriel.acciones SET encendido = $1, blink = $2 WHERE id = $3',

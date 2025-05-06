@@ -30,12 +30,10 @@ import { clerkClient, getAuth } from '@clerk/express'
 // }
 
 export const todos_usuarios = async (req, res) => {
-  console.log('llega')
   try {
     const { rows } = await DBPostgres.query(
       'select * from sena.admin_todos_usuarios'
     )
-    console.log(rows)
     if (!rows.length) {
       return res
         .status(404)
@@ -119,7 +117,6 @@ export const Actualizar_usuarios = async (req, res) => {
        WHERE id = $5 returning id `,
       [nombre, edad, email, claveacceso, id]
     )
-    console.log(rows)
     if (!rows.length) {
       return res.status(404).json({ error: `el usuario con ${id} no existe` })
     }
@@ -154,7 +151,6 @@ export const perfil_usuarios = async (req, res) => {
 
 export const inciarsesion_usuarios = async (req, res) => {
   const { email, claveacceso } = req.body
-  console.log(email, claveacceso)
   try {
     const existe = await DBPostgres.query(
       `select * from sena.usuarios where email = $1 `,
@@ -185,7 +181,6 @@ export const inciarsesion_usuarios = async (req, res) => {
 
 export const Cerrar_sesion = async (req, res) => {
   const { email, claveacceso } = req.body
-  console.log(email, claveacceso)
   try {
     // se borra todo los datos temporales de la pagina por seguridad del usuarios
   } catch (error) {
@@ -205,7 +200,6 @@ export const Actualizar_usuarios_admin = async (req, res) => {
        WHERE id = $5 returning id `,
       [nombre, edad, email, claveacceso, id]
     )
-    console.log(rows)
     if (!rows.length) {
       return res.status(404).json({ error: `el usuario con ${id} no existe` })
     }
@@ -240,7 +234,6 @@ export const borrar_usuarios_admin = async (req, res) => {
 
 export const privada = async (req, res) => {
   const { userId } = getAuth(req)
-  console.log({ id: userId })
   try {
     const user = await clerkClient.users.getUser(userId)
     if (!user) {
@@ -265,9 +258,7 @@ export const notificaciones = async (req, res) => {
           = $1 ORDER BY fecha_creacion desc`,
         [userId]
       )
-      console.log(rows)
       if (rows) {
-        console.log(rows)
         return res.status(200).json({ rows })
       }
     } catch (error) {
@@ -286,9 +277,7 @@ export const borrar_notificacion = async (req, res) => {
         `DELETE FROM sena.notificaciones WHERE id = $1 AND usuario_id = $2`,
         [id, userId]
       )
-      console.log(rows)
       if (rows) {
-        console.log(rows)
         return res.status(200).json({ rows })
       }
     } catch (error) {
@@ -306,9 +295,7 @@ export const borrar_todas_notificaciones = async (req, res) => {
         `DELETE FROM sena.Notificaciones WHERE usuario_id = $1 returning id`,
         [userId]
       )
-      console.log(rows)
       if (rows) {
-        console.log(rows)
         return res.status(200).json({ rows })
       }
     } catch (error) {

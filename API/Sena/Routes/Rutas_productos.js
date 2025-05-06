@@ -2,6 +2,7 @@ import { Router } from 'express'
 
 import {
   agregar_producto,
+  borrar_categoria,
   categorias,
   crear_categoria,
   editar_producto,
@@ -21,6 +22,6 @@ rutasproductos
 // categorias de productos
 rutasproductos.post('/crear_categoria', crear_categoria)
 rutasproductos.get('/categorias', categorias)
-rutasproductos.delete('/categorias/:id', agregar_producto)
+rutasproductos.delete('/categorias/:id', borrar_categoria)
 
 export default rutasproductos
