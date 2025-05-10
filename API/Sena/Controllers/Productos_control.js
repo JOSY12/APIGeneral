@@ -126,9 +126,8 @@ LIMIT $5 OFFSET $6`,
     })
   }
 }
-export const listar_producto = async (req, res) => {
+export const detalle_producto = async (req, res) => {
   const { id } = req.params
-  console.log(id)
   if (!id) {
     return res.status(400).json({ error: 'Faltan datos' })
   }

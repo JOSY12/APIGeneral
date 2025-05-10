@@ -7,7 +7,7 @@ import {
   crear_categoria,
   editar_producto,
   eliminar_producto,
-  listar_producto,
+  detalle_producto,
   listar_productos
 } from '../Controllers/Productos_control.js'
 const rutasproductos = Router()
@@ -15,8 +15,8 @@ const rutasproductos = Router()
 rutasproductos.post('/crear_producto', agregar_producto)
 rutasproductos.get('/productos', listar_productos)
 rutasproductos
-  .route('/producto/:id')
-  .get(listar_producto)
+  .route('/productos/:id')
+  .get(detalle_producto)
   .delete(eliminar_producto)
   .put(editar_producto)
 // categorias de productos
