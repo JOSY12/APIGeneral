@@ -3,7 +3,7 @@ import { DBPostgres } from '../../BDPostgres.js'
 export const agregar_producto = async (req, res) => {
   const { nombre, precio, estado, stock, descripcion, fotos, categorias } =
     req.body
-
+  console.log(nombre, precio, estado, stock, descripcion, fotos, categorias)
   if (
     !nombre ||
     !precio ||
@@ -67,7 +67,7 @@ export const agregar_producto = async (req, res) => {
       for (let c of categorias) {
         await DBPostgres.query(
           'INSERT INTO sena.Categorias_productos (categoria_id, producto_id ) VALUES ($1, $2)',
-          [c.categoria_id, rows[0].id]
+          [c.id, rows[0].id]
         )
       }
       return res.status(200).json({ exito: 'exito', id: rows[0].id })
@@ -83,8 +83,38 @@ export const agregar_producto = async (req, res) => {
 }
 
 export const listar_productos = async (req, res) => {
+  const {
+    nombre,
+    // precio_orden,
+    // nombre_orden,
+    categorias,
+    precio_min,
+    precio_max,
+    limit,
+    offset
+  } = req.params
+  console.log(typeof nombre)
   try {
-    const { rows } = await DBPostgres.query('SELECT * FROM sena.productos')
+    const { rows } = await DBPostgres.query(
+      `
+      SELECT * 
+FROM sena.Filtrar_Producto
+WHERE 
+  ($1::text IS NULL OR nombre ILIKE ' % ' || $1 || ') % ') AND 
+  ($2::text[] IS NULL OR categorias && $2) AND
+  ($3::numeric IS NULL OR precio >= $3) AND
+  ($4::numeric IS NULL OR precio <= $4)
+ORDER BY precio DESC
+LIMIT $5 OFFSET $6`,
+      [
+        nombre || null,
+        categorias?.length ? categorias : null,
+        precio_min || null,
+        precio_max || null,
+        Number(limit) || 10,
+        Number(offset) || 0
+      ]
+    )
 
     if (!rows.length) {
       return res.status(404).json({ error: 'No hay productos' })
@@ -98,18 +128,14 @@ export const listar_productos = async (req, res) => {
 }
 export const listar_producto = async (req, res) => {
   const { id } = req.params
+  console.log(id)
   if (!id) {
     return res.status(400).json({ error: 'Faltan datos' })
   }
-  if (isNaN(id)) {
-    return res.status(400).json({ error: 'ID no valido' })
-  }
-  if (id < 0) {
-    return res.status(400).json({ error: 'ID no valido' })
-  }
+
   try {
     const query = await DBPostgres.query(
-      'SELECT * FROM productos WHERE id = $1',
+      'SELECT * FROM sena.datos_producto WHERE id = $1',
       [id]
     )
     const producto = query.rows[0]
