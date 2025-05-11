@@ -8,20 +8,21 @@ import {
   editar_producto,
   eliminar_producto,
   detalle_producto,
-  listar_productos
+  listar_productos,
+  crear_comentario
 } from '../Controllers/Productos_control.js'
 const rutasproductos = Router()
 // productos
 rutasproductos.post('/crear_producto', agregar_producto)
-rutasproductos.get('/productos', listar_productos)
+// rutasproductos.get('/productos', listar_productos)
 rutasproductos
   .route('/productos/:id')
-  .get(detalle_producto)
   .delete(eliminar_producto)
   .put(editar_producto)
 // categorias de productos
 rutasproductos.post('/crear_categoria', crear_categoria)
-rutasproductos.get('/categorias', categorias)
 rutasproductos.delete('/categorias/:id', borrar_categoria)
+// comentarios de productos
+rutasproductos.post('/crear_comentario', crear_comentario)
 
 export default rutasproductos

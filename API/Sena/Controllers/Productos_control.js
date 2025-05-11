@@ -1,9 +1,9 @@
+import { getAuth } from '@clerk/express'
 import { DBPostgres } from '../../BDPostgres.js'
 
 export const agregar_producto = async (req, res) => {
   const { nombre, precio, estado, stock, descripcion, fotos, categorias } =
     req.body
-  console.log(nombre, precio, estado, stock, descripcion, fotos, categorias)
   if (
     !nombre ||
     !precio ||
@@ -93,7 +93,6 @@ export const listar_productos = async (req, res) => {
     limit,
     offset
   } = req.params
-  console.log(typeof nombre)
   try {
     const { rows } = await DBPostgres.query(
       `
@@ -133,15 +132,22 @@ export const detalle_producto = async (req, res) => {
   }
 
   try {
-    const query = await DBPostgres.query(
+    const producto = await DBPostgres.query(
       'SELECT * FROM sena.datos_producto WHERE id = $1',
       [id]
     )
-    const producto = query.rows[0]
-    if (!producto) {
+
+    const comentarios = await DBPostgres.query(
+      'SELECT * FROM sena.todos_comentarios WHERE producto_id  = $1',
+      [id]
+    )
+
+    if (!producto.rows.length) {
       return res.status(404).json({ error: 'No hay productos' })
     }
-    return res.status(200).json(producto)
+    return res
+      .status(200)
+      .json({ producto: producto.rows, comentarios: comentarios.rows })
   } catch (error) {
     return res.status(500).json({
       errores: error
@@ -274,6 +280,19 @@ export const borrar_categoria = async (req, res) => {
     )
 
     return res.status(200).json({ user })
+  } catch (error) {
+    return res.status(500).json({
+      errores: error
+    })
+  }
+}
+
+export const crear_comentario = async (req, res) => {
+  const { titulo, comentario, producto_id, calificacion, usuario_id } = req.body
+  console.log(titulo, comentario, producto_id, calificacion, usuario_id)
+
+  try {
+    return res.status(200).json({ exit: 'exito' })
   } catch (error) {
     return res.status(500).json({
       errores: error

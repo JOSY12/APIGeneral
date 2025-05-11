@@ -341,3 +341,75 @@ export const marcar_visto = async (req, res) => {
   }
   return res.status(400).json({ Error: 'no se recivio usuario' })
 }
+
+// favoritos
+
+export const favoritos = async (req, res) => {
+  const { userId } = getAuth(req)
+  if (userId) {
+    try {
+      const { rows } = await DBPostgres.query(
+        `SELECT * FROM sena.todos_favoritos WHERE usuario_id = $1`,
+        [userId]
+      )
+      if (rows) {
+        return res.status(200).json({ rows })
+      }
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}
+
+export const agregar_favorito = async (req, res) => {
+  const { userId } = getAuth(req)
+  const { id } = req.params
+  if (userId) {
+    try {
+      const encontrado = await DBPostgres.query(
+        'select * from sena.favoritos where producto_id = $1 and usuario_id = $2',
+        [id, userId]
+      )
+
+      if (!encontrado.rows.length) {
+        const { rows } = await DBPostgres.query(
+          `INSERT INTO sena.favoritos (usuario_id,producto_id) values($1,$2)`,
+          [userId, id]
+        )
+        if (rows) {
+          return res.status(200).json({ rows })
+        }
+      }
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}
+
+export const quitar_favorito = async (req, res) => {
+  const { userId } = getAuth(req)
+  const { id } = req.params
+  if (userId) {
+    try {
+      const encontrado = await DBPostgres.query(
+        'select * from sena.favoritos where id = $1 ',
+        [id]
+      )
+
+      if (encontrado.rows.length) {
+        const { rows } = await DBPostgres.query(
+          `delete from  sena.favoritos where id = $1`,
+          [id]
+        )
+        if (rows) {
+          return res.status(200).json({ rows })
+        }
+      }
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}
