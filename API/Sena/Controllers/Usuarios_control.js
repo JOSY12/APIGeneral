@@ -368,18 +368,17 @@ export const agregar_favorito = async (req, res) => {
   if (userId) {
     try {
       const encontrado = await DBPostgres.query(
-        'select * from sena.favoritos where producto_id = $1 and usuario_id = $2',
-        [id, userId]
+        'select * from sena.favoritos where usuario_id = $1 and producto_id = $2',
+        [userId, id]
       )
-
       if (!encontrado.rows.length) {
-        const { rows } = await DBPostgres.query(
+        await DBPostgres.query(
           `INSERT INTO sena.favoritos (usuario_id,producto_id) values($1,$2)`,
           [userId, id]
         )
-        if (rows) {
-          return res.status(200).json({ rows })
-        }
+        return res.status(200).json('exito')
+      } else if (encontrado.rows.length) {
+        return res.status(200).json('ya existe')
       }
     } catch (error) {
       return res.status(500).json({ Error: error })
@@ -393,20 +392,12 @@ export const quitar_favorito = async (req, res) => {
   const { id } = req.params
   if (userId) {
     try {
-      const encontrado = await DBPostgres.query(
-        'select * from sena.favoritos where id = $1 ',
-        [id]
+      await DBPostgres.query(
+        `delete from  sena.favoritos where producto_id = $1 and usuario_id = $2`,
+        [id, userId]
       )
 
-      if (encontrado.rows.length) {
-        const { rows } = await DBPostgres.query(
-          `delete from  sena.favoritos where id = $1`,
-          [id]
-        )
-        if (rows) {
-          return res.status(200).json({ rows })
-        }
-      }
+      return res.status(200).json('exito')
     } catch (error) {
       return res.status(500).json({ Error: error })
     }
