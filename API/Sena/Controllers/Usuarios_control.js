@@ -232,21 +232,6 @@ export const borrar_usuarios_admin = async (req, res) => {
   }
 }
 
-export const privada = async (req, res) => {
-  const { userId } = getAuth(req)
-  try {
-    const user = await clerkClient.users.getUser(userId)
-    if (!user) {
-      return res.status(404).json({ error: 'usuario no encontrado' })
-    }
-    return res.status(200).json({ user })
-  } catch (error) {
-    return res.status(500).json({
-      errores: error
-    })
-  }
-}
-
 export const notificaciones = async (req, res) => {
   const { userId } = getAuth(req)
   if (userId) {
@@ -277,6 +262,7 @@ export const borrar_notificacion = async (req, res) => {
         `DELETE FROM sena.notificaciones WHERE id = $1 AND usuario_id = $2`,
         [id, userId]
       )
+      console.log(rows)
       if (rows) {
         return res.status(200).json({ rows })
       }
@@ -328,13 +314,12 @@ export const marcar_visto = async (req, res) => {
 
   if (userId) {
     try {
-      const { rows } = await DBPostgres.query(
-        `UPDATE sena.Notificaciones n SET visto = true WHERE n.usuario_id = $1 returning id `,
+      await DBPostgres.query(
+        `UPDATE sena.Notificaciones n SET visto = true WHERE n.usuario_id = $1 `,
         [userId]
       )
-      if (rows) {
-        return res.status(200).json(rows)
-      }
+
+      return res.status(200).json('exito')
     } catch (error) {
       return res.status(500).json({ Error: error })
     }
@@ -364,17 +349,17 @@ export const favoritos = async (req, res) => {
 
 export const agregar_favorito = async (req, res) => {
   const { userId } = getAuth(req)
-  const { id } = req.params
+  const { idfavorito } = req.body
   if (userId) {
     try {
       const encontrado = await DBPostgres.query(
         'select * from sena.favoritos where usuario_id = $1 and producto_id = $2',
-        [userId, id]
+        [userId, idfavorito]
       )
       if (!encontrado.rows.length) {
         await DBPostgres.query(
           `INSERT INTO sena.favoritos (usuario_id,producto_id) values($1,$2)`,
-          [userId, id]
+          [userId, idfavorito]
         )
         return res.status(200).json('exito')
       } else if (encontrado.rows.length) {
@@ -388,6 +373,70 @@ export const agregar_favorito = async (req, res) => {
 }
 
 export const quitar_favorito = async (req, res) => {
+  const { userId } = getAuth(req)
+  const { id } = req.params
+  if (userId) {
+    try {
+      await DBPostgres.query(
+        `delete from  sena.favoritos where producto_id = $1 and usuario_id = $2`,
+        [id, userId]
+      )
+
+      return res.status(200).json('exito')
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}
+
+// CARRITO
+
+export const carrito = async (req, res) => {
+  const { userId } = getAuth(req)
+  if (userId) {
+    try {
+      const { rows } = await DBPostgres.query(
+        `SELECT* FROM sena.solicitar_carrito_usuario WHERE carrito_id = $1`,
+        [userId]
+      )
+      console.log(rows)
+      if (rows) {
+        return res.status(200).json({ rows })
+      }
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}
+
+export const agregar_carrito = async (req, res) => {
+  const { userId } = getAuth(req)
+  const { idfavorito } = req.body
+  if (userId) {
+    try {
+      const encontrado = await DBPostgres.query(
+        'select * from sena.carritos_productos where carrito_id = $1 and producto_id = $2',
+        [userId, idfavorito]
+      )
+      if (!encontrado.rows.length) {
+        await DBPostgres.query(
+          `INSERT INTO sena.carritos_productos cp (carrito_id,producto_id) values($1,$2)`,
+          [userId, idfavorito]
+        )
+        return res.status(200).json('exito')
+      } else if (encontrado.rows.length) {
+        return res.status(200).json('ya existe')
+      }
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}
+
+export const quitar_carrito = async (req, res) => {
   const { userId } = getAuth(req)
   const { id } = req.params
   if (userId) {

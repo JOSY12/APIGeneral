@@ -137,17 +137,38 @@ export const detalle_producto = async (req, res) => {
       [id]
     )
 
+    if (!producto.rows.length) {
+      return res.status(404).json({ error: 'No hay productos' })
+    }
+    console.log(producto.rows)
+    return res.status(200).json({ producto: producto.rows })
+  } catch (error) {
+    return res.status(500).json({
+      errores: error
+    })
+  }
+}
+
+export const comentarios_producto = async (req, res) => {
+  const { id } = req.params
+  if (!id) {
+    return res.status(400).json({ error: 'Faltan datos' })
+  }
+
+  try {
+    const { rows } = await DBPostgres.query(
+      'SELECT * FROM sena.productos WHERE id = $1',
+      [id]
+    )
     const comentarios = await DBPostgres.query(
       'SELECT * FROM sena.todos_comentarios WHERE producto_id  = $1',
       [id]
     )
 
-    if (!producto.rows.length) {
+    if (!rows.length) {
       return res.status(404).json({ error: 'No hay productos' })
     }
-    return res
-      .status(200)
-      .json({ producto: producto.rows, comentarios: comentarios.rows })
+    return res.status(200).json({ comentarios: comentarios.rows })
   } catch (error) {
     return res.status(500).json({
       errores: error
@@ -289,9 +310,13 @@ export const borrar_categoria = async (req, res) => {
 
 export const crear_comentario = async (req, res) => {
   const { titulo, comentario, producto_id, calificacion, usuario_id } = req.body
-  console.log(titulo, comentario, producto_id, calificacion, usuario_id)
 
   try {
+    await DBPostgres.query(
+      'INSERT INTO sena.comentarios_productos(producto_id,usuario_id,titulo,comentario,calificacion) values($1,$2,$3,$4,$5)',
+      [producto_id, usuario_id, titulo, comentario, calificacion]
+    )
+
     return res.status(200).json({ exit: 'exito' })
   } catch (error) {
     return res.status(500).json({
