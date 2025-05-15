@@ -1,5 +1,5 @@
 # Usar una versión específica de Node.js para evitar cambios inesperados
-FROM node:alpine  
+FROM node:latest  
 
 # Establecer el directorio de trabajo
 WORKDIR /usr/src/app

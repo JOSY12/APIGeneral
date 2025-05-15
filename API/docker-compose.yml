@@ -26,7 +26,7 @@ services:
   basededatos_docker:
     container_name: basededatos_docker
     # remover la colation en UPDATE pg_database SET datcollversion = NULL WHERE datname = 'postgres,template1';
-    image: postgres:alpine
+    image: postgres:latest
     ports:
       - '5432:5432'
     env_file:
@@ -38,7 +38,7 @@ services:
   # uso ngrok para compartir servidor y probarlo en internet usando el key de ngrok privado
   servidor_ngrok_api:
     container_name: servidor_ngrok_api
-    image: ngrok/ngrok:alpine
+    image: ngrok/ngrok:latest
     restart: unless-stopped
     env_file:
       - .env
