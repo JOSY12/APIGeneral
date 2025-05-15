@@ -413,17 +413,17 @@ export const carrito = async (req, res) => {
 
 export const agregar_carrito = async (req, res) => {
   const { userId } = getAuth(req)
-  const { idfavorito } = req.body
+  const { idproducto } = req.body
   if (userId) {
     try {
       const encontrado = await DBPostgres.query(
         'select * from sena.carritos_productos where carrito_id = $1 and producto_id = $2',
-        [userId, idfavorito]
+        [userId, idproducto]
       )
       if (!encontrado.rows.length) {
         await DBPostgres.query(
-          `INSERT INTO sena.carritos_productos cp (carrito_id,producto_id) values($1,$2)`,
-          [userId, idfavorito]
+          `INSERT INTO sena.carritos_productos (carrito_id,producto_id) values($1,$2)`,
+          [userId, idproducto]
         )
         return res.status(200).json('exito')
       } else if (encontrado.rows.length) {
@@ -442,7 +442,7 @@ export const quitar_carrito = async (req, res) => {
   if (userId) {
     try {
       await DBPostgres.query(
-        `delete from  sena.favoritos where producto_id = $1 and usuario_id = $2`,
+        `delete from  sena.carritos_productos where producto_id = $1 and carrito_id = $2`,
         [id, userId]
       )
 
