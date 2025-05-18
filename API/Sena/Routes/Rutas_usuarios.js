@@ -11,6 +11,7 @@ import {
   contador_notificaciones,
   favoritos,
   marcar_visto,
+  modificar_cantidad,
   notificaciones,
   perfil_usuarios,
   quitar_carrito,
@@ -46,6 +47,8 @@ rutasusuarios.post('/agregar_favorito', agregar_favorito)
 rutasusuarios.delete('/quitar_favorito/:id', quitar_favorito)
 // CARRITO
 rutasusuarios.get('/carrito', carrito)
+rutasusuarios.put('/carrito_cantidad', modificar_cantidad)
+
 rutasusuarios.post('/agregar_carrito', agregar_carrito)
 rutasusuarios.delete('/quitar_carrito/:id', quitar_carrito)
 

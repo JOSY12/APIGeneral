@@ -262,7 +262,6 @@ export const borrar_notificacion = async (req, res) => {
         `DELETE FROM sena.notificaciones WHERE id = $1 AND usuario_id = $2`,
         [id, userId]
       )
-      console.log(rows)
       if (rows) {
         return res.status(200).json({ rows })
       }
@@ -400,7 +399,6 @@ export const carrito = async (req, res) => {
         `SELECT* FROM sena.solicitar_carrito_usuario WHERE carrito_id = $1`,
         [userId]
       )
-      console.log(rows)
       if (rows) {
         return res.status(200).json({ rows })
       }
@@ -447,6 +445,31 @@ export const quitar_carrito = async (req, res) => {
       )
 
       return res.status(200).json('exito')
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}
+
+export const modificar_cantidad = async (req, res) => {
+  const { userId } = getAuth(req)
+  const { idproducto, cantidad } = req.body
+  if (userId) {
+    try {
+      const encontrado = await DBPostgres.query(
+        'select * from sena.carritos_productos where carrito_id = $1 and producto_id = $2',
+        [userId, idproducto]
+      )
+      if (encontrado.rows.length) {
+        await DBPostgres.query(
+          `UPDATE sena.carritos_productos SET cantidad = $1 WHERE carrito_id = $2 AND producto_id = $3`,
+          [cantidad, userId, idproducto]
+        )
+        return res.status(200).json('exito actualizando')
+      } else if (encontrado.rows.length) {
+        return res.status(200).json('sin cambio')
+      }
     } catch (error) {
       return res.status(500).json({ Error: error })
     }
