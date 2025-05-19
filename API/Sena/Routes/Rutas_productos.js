@@ -9,12 +9,13 @@ import {
   eliminar_producto,
   detalle_producto,
   listar_productos,
-  crear_comentario
+  crear_comentario,
+  detalle_producto_editar
 } from '../Controllers/Productos_control.js'
 const rutasproductos = Router()
 // productos
 rutasproductos.post('/crear_producto', agregar_producto)
-// rutasproductos.get('/productos', listar_productos)
+rutasproductos.get('/detalle_producto_editar/:id', detalle_producto_editar)
 rutasproductos
   .route('/productos/:id')
   .delete(eliminar_producto)

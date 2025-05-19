@@ -114,7 +114,6 @@ LIMIT $5 OFFSET $6`,
         Number(offset) || 0
       ]
     )
-
     if (!rows.length) {
       return res.status(404).json({ error: 'No hay productos' })
     }
@@ -134,6 +133,30 @@ export const detalle_producto = async (req, res) => {
   try {
     const producto = await DBPostgres.query(
       'SELECT * FROM sena.datos_producto WHERE id = $1',
+      [id]
+    )
+
+    if (!producto.rows.length) {
+      return res.status(404).json({ error: 'No hay productos' })
+    }
+    console.log(producto.rows)
+    return res.status(200).json({ producto: producto.rows })
+  } catch (error) {
+    return res.status(500).json({
+      errores: error
+    })
+  }
+}
+
+export const detalle_producto_editar = async (req, res) => {
+  const { id } = req.params
+  if (!id) {
+    return res.status(400).json({ error: 'Faltan datos' })
+  }
+
+  try {
+    const producto = await DBPostgres.query(
+      'SELECT * FROM sena.datos_producto_editar WHERE id = $1',
       [id]
     )
 

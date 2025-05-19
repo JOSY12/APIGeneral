@@ -31,15 +31,17 @@ import { clerkClient, getAuth } from '@clerk/express'
 
 export const todos_usuarios = async (req, res) => {
   try {
-    const { rows } = await DBPostgres.query(
+    const usuarios = await DBPostgres.query(
       'select * from sena.admin_todos_usuarios'
     )
-    if (!rows.length) {
+
+    const datos = await DBPostgres.query('select * from sena.datos_techsells')
+    if (!usuarios.rows.length) {
       return res
         .status(404)
         .json({ error: 'no existen usuarios en la base de datos' })
     }
-    return res.status(200).json({ Usuarios: rows })
+    return res.status(200).json({ usuarios: usuarios.rows, datos: datos.rows })
   } catch (error) {
     return res.status(500).json({
       errores: error
