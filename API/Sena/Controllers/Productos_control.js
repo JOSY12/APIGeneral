@@ -139,7 +139,6 @@ export const detalle_producto = async (req, res) => {
     if (!producto.rows.length) {
       return res.status(404).json({ error: 'No hay productos' })
     }
-    console.log(producto.rows)
     return res.status(200).json({ producto: producto.rows })
   } catch (error) {
     return res.status(500).json({
@@ -177,12 +176,14 @@ export const comentarios_producto = async (req, res) => {
   if (!id) {
     return res.status(400).json({ error: 'Faltan datos' })
   }
+  console.log(id)
 
   try {
     const { rows } = await DBPostgres.query(
       'SELECT * FROM sena.productos WHERE id = $1',
       [id]
     )
+
     const comentarios = await DBPostgres.query(
       'SELECT * FROM sena.todos_comentarios WHERE producto_id  = $1',
       [id]
@@ -200,7 +201,10 @@ export const comentarios_producto = async (req, res) => {
 }
 
 export const editar_producto = async (req, res) => {
-  const { id, nombre, precio, estado, stock, descripcion } = req.body
+  const producto = req.body
+  const { id } = req.params
+  const { nombre, precio, estado, stock, descripcion, categorias, fotos } =
+    producto
   if (!id) {
     return res.status(400).json({ error: 'Faltan id de producto ' })
   }
@@ -230,10 +234,42 @@ export const editar_producto = async (req, res) => {
   }
 
   try {
-    const query = await DBPostgres.query(
-      'UPDATE productos SET nombre = $1, precio = $2,  estado = $4, stock = $5, descripcion = $6 WHERE id = $7',
+    const fotosactuales = await DBPostgres.query(
+      'SELECT * FROM sena.imagenes_producto WHERE producto_id = $1',
+      [id]
+    )
+    if (fotosactuales.rows.length) {
+      await DBPostgres.query(
+        'DELETE FROM sena.imagenes_producto WHERE producto_id = $1',
+        [id]
+      )
+    }
+    const categoriasactuales = await DBPostgres.query(
+      'SELECT * FROM sena.categorias_productos WHERE producto_id = $1',
+      [id]
+    )
+    if (categoriasactuales.rows.length) {
+      await DBPostgres.query(
+        'DELETE FROM sena.categorias_productos WHERE producto_id = $1',
+        [id]
+      )
+    }
+    await DBPostgres.query(
+      'UPDATE sena.productos SET nombre = $1, precio = $2,  estado = $3, stock = $4, descripcion = $5 WHERE id = $6',
       [nombre, precio, estado, stock, descripcion, id]
     )
+    for (let f of fotos) {
+      await DBPostgres.query(
+        'INSERT INTO sena.imagenes_producto (producto_id,public_id,url) VALUES ($1, $2, $3)',
+        [id, f.public_id, f.url]
+      )
+    }
+    for (let c of categorias) {
+      await DBPostgres.query(
+        'INSERT INTO sena.Categorias_productos (categoria_id, producto_id ) VALUES ($1, $2)',
+        [c.id, id]
+      )
+    }
     return res.status(200).json({ exito: 'exito' })
   } catch (error) {
     return res.status(500).json({
@@ -249,10 +285,7 @@ export const eliminar_producto = async (req, res) => {
   }
 
   try {
-    const query = await DBPostgres.query(
-      'DELETE FROM productos WHERE id = $1',
-      [id]
-    )
+    await DBPostgres.query('DELETE FROM sena.productos WHERE id = $1', [id])
     return res.status(200).json({ exito: 'exito' })
   } catch (error) {
     return res.status(500).json({

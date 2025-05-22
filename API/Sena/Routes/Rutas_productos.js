@@ -3,12 +3,9 @@ import { Router } from 'express'
 import {
   agregar_producto,
   borrar_categoria,
-  categorias,
   crear_categoria,
   editar_producto,
   eliminar_producto,
-  detalle_producto,
-  listar_productos,
   crear_comentario,
   detalle_producto_editar
 } from '../Controllers/Productos_control.js'
