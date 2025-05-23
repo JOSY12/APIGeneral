@@ -102,7 +102,7 @@ WHERE
   ($1::text IS NULL OR nombre ILIKE ' % ' || $1 || ') % ') AND 
   ($2::text[] IS NULL OR categorias && $2) AND
   ($3::numeric IS NULL OR precio >= $3) AND
-  ($4::numeric IS NULL OR precio <= $4)
+  ($4::numeric IS NULL OR precio <= $4) AND estado = 'Disponible'
 ORDER BY precio DESC
 LIMIT $5 OFFSET $6`,
       [
@@ -365,14 +365,18 @@ export const borrar_categoria = async (req, res) => {
 }
 
 export const crear_comentario = async (req, res) => {
-  const { titulo, comentario, producto_id, calificacion, usuario_id } = req.body
+  const { titulo, comentario, producto_id, calificacion } = req.body
+  const { userId } = getAuth(req)
 
   try {
-    await DBPostgres.query(
-      'INSERT INTO sena.comentarios_productos(producto_id,usuario_id,titulo,comentario,calificacion) values($1,$2,$3,$4,$5)',
-      [producto_id, usuario_id, titulo, comentario, calificacion]
-    )
-
+    if (userId)
+      await DBPostgres.query(
+        'INSERT INTO sena.comentarios_productos(producto_id,usuario_id,titulo,comentario,calificacion) values($1,$2,$3,$4,$5)',
+        [producto_id, userId, titulo, comentario, calificacion]
+      )
+    else {
+      return res.status(400).json({ error: 'Faltan datos' })
+    }
     return res.status(200).json({ exit: 'exito' })
   } catch (error) {
     return res.status(500).json({
