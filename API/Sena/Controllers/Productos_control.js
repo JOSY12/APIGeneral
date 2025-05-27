@@ -2,8 +2,11 @@ import { getAuth } from '@clerk/express'
 import { DBPostgres } from '../../BDPostgres.js'
 
 export const agregar_producto = async (req, res) => {
+  const { userId } = getAuth(req)
+
   const { nombre, precio, estado, stock, descripcion, fotos, categorias } =
     req.body
+  console.log(req.body)
   if (
     !nombre ||
     !precio ||
@@ -40,83 +43,83 @@ export const agregar_producto = async (req, res) => {
   if (nombre.length > 150) {
     return res.status(400).json({ error: 'Nombre demasiado largo' })
   }
-  if (nombre.length < 10) {
-    return res.status(400).json({ error: 'Nombre demasiado largo' })
+  if (nombre.length < 4) {
+    return res.status(400).json({ error: 'Nombre demasiado corto' })
   }
 
-  if (precio > 9999) {
+  if (precio > 10000000) {
     return res.status(400).json({ error: 'Precio demasiado alto' })
   }
 
-  if (stock > 1000) {
+  if (stock > 10000000) {
     return res.status(400).json({ error: 'Stock demasiado alto' })
   }
-
-  try {
-    const { rows } = await DBPostgres.query(
-      'INSERT INTO sena.productos (nombre, precio,  estado, stock, descripcion) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-      [nombre, precio, estado, stock, descripcion]
-    )
-    if (rows.length) {
-      for (let f of fotos) {
-        await DBPostgres.query(
-          'INSERT INTO sena.imagenes_producto (producto_id,public_id,url) VALUES ($1, $2, $3)',
-          [rows[0].id, f.public_id, f.url]
-        )
+  if (userId) {
+    try {
+      const { rows } = await DBPostgres.query(
+        'INSERT INTO sena.productos (nombre, precio,  estado, stock, descripcion) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+        [nombre, precio, estado, stock, descripcion]
+      )
+      if (rows.length) {
+        for (let f of fotos) {
+          await DBPostgres.query(
+            'INSERT INTO sena.imagenes_producto (producto_id,public_id,url) VALUES ($1, $2, $3)',
+            [rows[0].id, f.public_id, f.url]
+          )
+        }
+        for (let c of categorias) {
+          await DBPostgres.query(
+            'INSERT INTO sena.Categorias_productos (categoria_id, producto_id ) VALUES ($1, $2)',
+            [c.id, rows[0].id]
+          )
+        }
+        return res.status(200).json({ exito: 'exito', id: rows[0].id })
       }
-      for (let c of categorias) {
-        await DBPostgres.query(
-          'INSERT INTO sena.Categorias_productos (categoria_id, producto_id ) VALUES ($1, $2)',
-          [c.id, rows[0].id]
-        )
-      }
-      return res.status(200).json({ exito: 'exito', id: rows[0].id })
+      return res.status(400).json({
+        errores: error
+      })
+    } catch (error) {
+      return res.status(500).json({
+        errores: error
+      })
     }
-    return res.status(400).json({
-      errores: error
-    })
-  } catch (error) {
-    return res.status(500).json({
-      errores: error
-    })
+  } else {
+    return res.status(400).json({ error: 'Faltan datos de usuario' })
   }
 }
 
 export const listar_productos = async (req, res) => {
-  const {
-    nombre,
-    // precio_orden,
-    // nombre_orden,
-    categorias,
-    precio_min,
-    precio_max,
-    limit,
-    offset
-  } = req.params
+  const Categorias = req.query['Categorias[]'] || []
+  const Minimo = req.query.Minimo ? parseInt(req.query.Minimo, 10) : null
+  const Maximo = req.query.Maximo ? parseInt(req.query.Maximo, 10) : null
+  const Nombre = req.query.Nombre || ''
+  const categoriasPG = Array.isArray(Categorias) ? Categorias : [Categorias]
   try {
     const { rows } = await DBPostgres.query(
-      `
-      SELECT * 
-FROM sena.Filtrar_Producto
-WHERE 
-  ($1::text IS NULL OR nombre ILIKE ' % ' || $1 || ') % ') AND 
-  ($2::text[] IS NULL OR categorias && $2) AND
-  ($3::numeric IS NULL OR precio >= $3) AND
-  ($4::numeric IS NULL OR precio <= $4) AND estado = 'Disponible'
-ORDER BY precio DESC
-LIMIT $5 OFFSET $6`,
+      `SELECT *
+     FROM sena.Filtrar_Producto
+     WHERE
+         (nombre ILIKE '%' || COALESCE($1, '') || '%' OR $1 IS NULL) AND
+         (categorias && $2 OR $2 IS NULL) AND
+         (precio >= $3 OR $3 IS NULL) AND
+         (precio <= $4 OR $4 IS NULL) AND
+         estado = 'Disponible'
+     ORDER BY precio DESC
+     LIMIT $5 OFFSET $6;`,
       [
-        nombre || null,
-        categorias?.length ? categorias : null,
-        precio_min || null,
-        precio_max || null,
-        Number(limit) || 10,
-        Number(offset) || 0
+        Nombre || null,
+        categoriasPG.length > 0 ? categoriasPG : null,
+        Minimo || null,
+        Maximo || null,
+        50,
+        0
       ]
     )
+
     if (!rows.length) {
-      return res.status(404).json({ error: 'No hay productos' })
+      return res.status(200).json({ error: 'No hay productos disponibles' })
     }
+
     return res.status(200).json(rows)
   } catch (error) {
     return res.status(500).json({
