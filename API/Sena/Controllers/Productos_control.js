@@ -94,6 +94,9 @@ export const listar_productos = async (req, res) => {
   const Maximo = req.query.Maximo ? parseInt(req.query.Maximo, 10) : null
   const Nombre = req.query.Nombre || ''
   const categoriasPG = Array.isArray(Categorias) ? Categorias : [Categorias]
+  console.log(
+    `Categorias: ${categoriasPG}, Minimo: ${Minimo}, Maximo: ${Maximo}, Nombre: ${Nombre}`
+  )
   try {
     const { rows } = await DBPostgres.query(
       `SELECT *
@@ -127,6 +130,27 @@ export const listar_productos = async (req, res) => {
     })
   }
 }
+
+export const landing_page_productos = async (req, res) => {
+  try {
+    const { rows } = await DBPostgres.query(
+      `SELECT *
+     FROM sena.productos_recientes`
+    )
+
+    if (!rows.length) {
+      return res.status(200).json({ error: 'No hay productos disponibles' })
+    }
+    console.log(rows)
+
+    return res.status(200).json(rows)
+  } catch (error) {
+    return res.status(500).json({
+      errores: error
+    })
+  }
+}
+
 export const detalle_producto = async (req, res) => {
   const { id } = req.params
   if (!id) {
