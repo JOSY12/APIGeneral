@@ -134,8 +134,7 @@ export const listar_productos = async (req, res) => {
 export const landing_page_productos = async (req, res) => {
   try {
     const { rows } = await DBPostgres.query(
-      `SELECT *
-     FROM sena.productos_recientes`
+      `SELECT * FROM sena.productos_recientes`
     )
 
     if (!rows.length) {
