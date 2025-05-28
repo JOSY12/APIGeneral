@@ -6,7 +6,6 @@ export const agregar_producto = async (req, res) => {
 
   const { nombre, precio, estado, stock, descripcion, fotos, categorias } =
     req.body
-  console.log(req.body)
   if (
     !nombre ||
     !precio ||
@@ -133,16 +132,21 @@ export const listar_productos = async (req, res) => {
 
 export const landing_page_productos = async (req, res) => {
   try {
-    const { rows } = await DBPostgres.query(
+    const Recientes = await DBPostgres.query(
       `SELECT * FROM sena.productos_recientes`
     )
 
-    if (!rows.length) {
+    const valorados = await DBPostgres.query(
+      `SELECT * FROM sena.Mejor_Valorados`
+    )
+
+    if (!Recientes.rows.length && !valorados.rows.length) {
       return res.status(200).json({ error: 'No hay productos disponibles' })
     }
-    console.log(rows)
 
-    return res.status(200).json(rows)
+    return res
+      .status(200)
+      .json({ Recientes: Recientes.rows, Valorados: valorados.rows })
   } catch (error) {
     return res.status(500).json({
       errores: error
