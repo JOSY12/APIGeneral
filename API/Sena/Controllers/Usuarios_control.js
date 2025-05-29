@@ -1,33 +1,5 @@
 import { DBPostgres } from '../../BDPostgres.js'
-import { clerkClient, getAuth } from '@clerk/express'
-//se crea el usuarios segun sun datos
-// export const crear_usuarios = async (req, res) => {
-//   let { id, name, email, imagen } = req.body
-//   //verifica que los datos enviados existan o se rechaza la peticion
-//   if (!id || !name || !email) {
-//     return res.status(400).json({
-//       Error: 'Faltan campos'
-//     })
-//   }
-//   //verifica que el usuario no exista
-//   const existe = await DBPostgres.query(
-//     `select * from sena.usuarios where email = $1 `,
-//     [email]
-//   )
-//   if (existe.rows.length) {
-//     return res.status(400).json({ error: 'el usuarios ya existe' })
-//   }
-
-//   try {
-//     const nuevoUsuario = await DBPostgres.query(
-//       `INSERT INTO sena.usuarios (id, nombre, email) VALUES ($1, $2, $3) RETURNING id`,
-//       [id, name, email]
-//     )
-//     return res.status(201).json({ id: nuevoUsuario.rows[0].id })
-//   } catch (error) {
-//     return res.status(500).json({ Error: error })
-//   }
-// }
+import { getAuth } from '@clerk/express'
 
 export const todos_usuarios = async (req, res) => {
   try {
@@ -103,8 +75,9 @@ export const borrar_usuarios = async (req, res) => {
 }
 
 export const Actualizar_usuarios = async (req, res) => {
-  const { nombre, edad, email, claveacceso } = req.body
+  const { nombre } = req.body
   const { id } = req.params
+  // [] actualizar con reqauth de clerk evitar usar id
   //verifica que los datos enviados existan o se rechaza la peticion
   if (!nombre || !edad || !email || !claveacceso || !id) {
     return res.status(400).json({
@@ -133,7 +106,7 @@ export const Actualizar_usuarios = async (req, res) => {
 
 export const perfil_usuarios = async (req, res) => {
   const { id } = req.params
-
+  // [] se puede cambiar para que sea con reqauth clerk en vez de id por params
   try {
     const { rows } = await DBPostgres.query(
       `select * from sena.usuarios where id = $1`,
@@ -144,47 +117,6 @@ export const perfil_usuarios = async (req, res) => {
       return res.status(404).json({ Perfil: 'perfil no encontrado' })
     }
     return res.status(200).json({ Perfil: rows })
-  } catch (error) {
-    return res.status(500).json({
-      errores: error
-    })
-  }
-}
-
-export const inciarsesion_usuarios = async (req, res) => {
-  const { email, claveacceso } = req.body
-  try {
-    const existe = await DBPostgres.query(
-      `select * from sena.usuarios where email = $1 `,
-      [email]
-    )
-    if (!existe.rows.length) {
-      return res.status(404).json({ error: 'el usuarios no existe' })
-    }
-
-    if (existe.rows[0].email && claveacceso) {
-      const { rows } = await DBPostgres.query(
-        `select * from sena.usuarios where email = $1 and claveacceso = $2`,
-        [email, claveacceso]
-      )
-
-      if (rows.length) {
-        return res.status(200).json({ Usuario: rows })
-      } else {
-        return res.status(404).json({ error: 'clave o correo incorrectos' })
-      }
-    }
-  } catch (error) {
-    return res.status(500).json({
-      errores: error
-    })
-  }
-}
-
-export const Cerrar_sesion = async (req, res) => {
-  const { email, claveacceso } = req.body
-  try {
-    // se borra todo los datos temporales de la pagina por seguridad del usuarios
   } catch (error) {
     return res.status(500).json({
       errores: error
@@ -216,6 +148,7 @@ export const Actualizar_usuarios_admin = async (req, res) => {
 
 export const borrar_usuarios_admin = async (req, res) => {
   const { id } = req.params
+  // [] verificar si el usuarios es admin en clerk y en dbpostgres
   try {
     const { rows } = await DBPostgres.query(
       'delete from sena.usuarios where id = $1 returning id',
@@ -258,6 +191,7 @@ export const notificaciones = async (req, res) => {
 export const borrar_notificacion = async (req, res) => {
   const { userId } = getAuth(req)
   const { id } = req.params
+  // []refactorizar si es necesario
   if (userId) {
     try {
       const { rows } = await DBPostgres.query(

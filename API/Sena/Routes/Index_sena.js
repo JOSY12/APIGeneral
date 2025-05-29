@@ -11,5 +11,5 @@ senaindex.use('/u', RequiereAutorizacion(), rutasusuarios)
 senaindex.use('/clerk', clerkwebhook)
 senaindex.use('/p', RequiereAutorizacion(), rutasproductos)
 senaindex.use('/pu', rutaspublicas)
-senaindex.use('/stripe', rutasstripe)
+senaindex.use('/stripe_compras', RequiereAutorizacion(), rutasstripe)
 export default senaindex
