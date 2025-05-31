@@ -1,6 +1,7 @@
 import { clerkClient, getAuth } from '@clerk/express'
 import PagosStripe from '../../Stripe.js'
 import { DBPostgres } from '../../BDPostgres.js'
+
 export const comprar_producto = async (req, res) => {
   const { userId } = getAuth(req)
   const { idproducto } = req.body
@@ -60,8 +61,8 @@ export const comprar_producto = async (req, res) => {
       payment_method_types: ['card'],
       customer_email: usuario.emailAddresses[0].emailAddress,
       mode: 'payment',
-      success_url: 'http://localhost:5173/',
-      cancel_url: 'http://localhost:5173/u/carrito',
+      success_url: `${process.env.STRIPE_REDIRECCION}/u/compras`,
+      cancel_url: `${process.env.STRIPE_REDIRECCION}/u/carrito`,
       payment_intent_data: {
         metadata: {
           userid: userId
