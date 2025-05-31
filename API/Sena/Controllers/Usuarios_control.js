@@ -175,7 +175,6 @@ export const notificaciones = async (req, res) => {
         `SELECT * FROM sena.usuario_notificaciones WHERE usuario_id = $1 ORDER BY fecha_creacion desc`,
         [userId]
       )
-      console.log(rows)
       if (rows) {
         return res.status(200).json({ rows })
       }

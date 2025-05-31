@@ -73,8 +73,6 @@ export const comprar_producto = async (req, res) => {
       }
     })
 
-    console.log('Link de compra generado:', link.url)
-
     return res.status(200).json(link.url)
   } catch (error) {
     return res.status(500).json({

@@ -110,8 +110,6 @@ stripewebhook.post('/webhook', async (req, res) => {
         case 'checkout.session.completed':
           const sessionCompleted = event.data.object
 
-          // console.log('Checkout Session completada:', sessionCompleted)
-
           const compracompletada = await DBPostgres.query(
             'select id from sena.compras where pago_id_compra = $1',
             [sessionCompleted.payment_intent]
@@ -153,9 +151,7 @@ stripewebhook.post('/webhook', async (req, res) => {
                 usuario.rows[0].id,
                 'https://res.cloudinary.com/rebelion/image/upload/v1748659564/pagocompletado_zv6iq4.png',
                 'Compra exitosa',
-                'Compra finalizada exitosamente, id de la sesion : ' +
-                  sessionCompleted.id +
-                  'con esa id puedes verificar el estado de tu compra en tu historial de compras'
+                `Compra finalizada exitosamente, id de la sesion  ${sessionCompleted.id} con esa id puedes verificar el estado de tu compra en tu historial de compras`
               ]
             )
 
@@ -167,9 +163,6 @@ stripewebhook.post('/webhook', async (req, res) => {
             )
 
             for (const item of session.line_items.data) {
-              console.log('item id', item.price.product.metadata.product_id)
-              console.log('cantidad comprada', item.quantity)
-
               await DBPostgres.query(
                 'INSERT INTO sena.Compras_Productos (sesion_id_compra,producto_id,cantidad) values($1,$2,$3)',
                 [
@@ -185,7 +178,8 @@ stripewebhook.post('/webhook', async (req, res) => {
 
         case 'payment_intent.payment_failed':
           const paymentFailed = event.data.object
-          console.log('PaymentIntent fallido:', paymentFailed)
+          // se puede mejorar para que se envie el id del carrito o el id individual
+          // de la compra y enviar mensaje de que fue lo que se intenteo comprar
 
           const pagofallido = await DBPostgres.query(
             ' select id from sena.compras where pago_id_compra = $1',
@@ -213,13 +207,11 @@ stripewebhook.post('/webhook', async (req, res) => {
 
         case 'payment_intent.processing':
           const paymentProcessing = event.data.object
-          console.log('PaymentIntent en procesamiento:', paymentProcessing)
           // Manejar el evento payment_intent.processing
           break
 
         case 'payment_intent.canceled':
           const paymentCanceled = event.data.object
-          console.log('PaymentIntent cancelado:', paymentCanceled)
 
           const pagocancelado = await DBPostgres.query(
             ' select id from sena.compras where pago_id_compra = $1',

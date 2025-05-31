@@ -93,9 +93,7 @@ export const listar_productos = async (req, res) => {
   const Maximo = req.query.Maximo ? parseInt(req.query.Maximo, 10) : null
   const Nombre = req.query.Nombre || ''
   const categoriasPG = Array.isArray(Categorias) ? Categorias : [Categorias]
-  console.log(
-    `Categorias: ${categoriasPG}, Minimo: ${Minimo}, Maximo: ${Maximo}, Nombre: ${Nombre}`
-  )
+
   try {
     const { rows } = await DBPostgres.query(
       `SELECT *
@@ -192,7 +190,6 @@ export const detalle_producto_editar = async (req, res) => {
     if (!producto.rows.length) {
       return res.status(404).json({ error: 'No hay productos' })
     }
-    console.log(producto.rows)
     return res.status(200).json({ producto: producto.rows })
   } catch (error) {
     return res.status(500).json({
@@ -206,7 +203,6 @@ export const comentarios_producto = async (req, res) => {
   if (!id) {
     return res.status(400).json({ error: 'Faltan datos' })
   }
-  console.log(id)
 
   try {
     const { rows } = await DBPostgres.query(
