@@ -130,8 +130,7 @@ stripewebhook.post('/webhook', async (req, res) => {
                 usuario.rows[0].id,
                 'https://res.cloudinary.com/rebelion/image/upload/v1748659564/pagocompletado_zv6iq4.png',
                 'Compra exitosa',
-                'Compra finalizada exitosamente, id de la sesion : ' +
-                  sessionCompleted.id
+                `Compra finalizada exitosamente,  los productos comprados se mostraran en la seccion de compras, id de la sesion: ${sessionCompleted.id}`
               ]
             )
           } else {
@@ -151,7 +150,7 @@ stripewebhook.post('/webhook', async (req, res) => {
                 usuario.rows[0].id,
                 'https://res.cloudinary.com/rebelion/image/upload/v1748659564/pagocompletado_zv6iq4.png',
                 'Compra exitosa',
-                `Compra finalizada exitosamente, id de la sesion  ${sessionCompleted.id} con esa id puedes verificar el estado de tu compra en tu historial de compras`
+                `Compra finalizada exitosamente,  los productos comprados se mostraran en la seccion de compras, id de la sesion: ${sessionCompleted.id}`
               ]
             )
 
