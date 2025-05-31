@@ -41,7 +41,12 @@ clerkwebhook.post('/webhook', async (req, res) => {
               `insert into sena.Carritos (id) values($1)`,
               [id]
             )
+            // inserta una entida compras a el usuario creado
 
+            // await DBPostgres.query(
+            //   'INSERT INTO sena.compras (id) values ($1)',
+            //   [id]
+            // )
             // inserta los atributos del usuario
             await DBPostgres.query(
               `INSERT INTO sena.Atributos_usuarios (id) values($1)`,
@@ -49,9 +54,10 @@ clerkwebhook.post('/webhook', async (req, res) => {
             )
 
             await DBPostgres.query(
-              `INSERT INTO sena.notificaciones (usuario_id,titulo,descripcion) values($1,$2,$3)`,
+              `INSERT INTO sena.notificaciones (usuario_id,icono,titulo,descripcion) values($1,$2,$3,$4)`,
               [
                 id,
+                'https://res.cloudinary.com/rebelion/image/upload/v1748659564/nuevousuario_yije9z.png',
                 'Registro Techsells',
                 'Bienvenido a Techsells, tu tienda de tecnologia.'
               ]
@@ -65,7 +71,7 @@ clerkwebhook.post('/webhook', async (req, res) => {
                 publicMetadata: {
                   administrador: false,
                   baneado: false,
-                  rol: 'usuario'
+                  rol: 'Comprador'
                 }
               })
             }

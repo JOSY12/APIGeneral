@@ -172,12 +172,10 @@ export const notificaciones = async (req, res) => {
   if (userId) {
     try {
       const { rows } = await DBPostgres.query(
-        `SELECT id,  usuario_id, titulo,descripcion,
-         visto, to_char(fecha_creacion, 'DD/MM/YYYY HH12:MI:SS') 
-         AS fecha_creacion FROM sena.notificaciones WHERE usuario_id
-          = $1 ORDER BY fecha_creacion desc`,
+        `SELECT * FROM sena.usuario_notificaciones WHERE usuario_id = $1 ORDER BY fecha_creacion desc`,
         [userId]
       )
+      console.log(rows)
       if (rows) {
         return res.status(200).json({ rows })
       }
