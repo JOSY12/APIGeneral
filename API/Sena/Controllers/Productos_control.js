@@ -93,9 +93,10 @@ export const listar_productos = async (req, res) => {
   const Maximo = req.query.Maximo ? parseInt(req.query.Maximo, 10) : null
   const Nombre = req.query.Nombre || ''
   const categoriasPG = Array.isArray(Categorias) ? Categorias : [Categorias]
-
+  const productos_por_filtro = 50
+  const offset = 0
   try {
-    const { rows } = await DBPostgres.query(
+    const { rows: Productos } = await DBPostgres.query(
       `SELECT *
      FROM sena.Filtrar_Producto
      WHERE
@@ -111,16 +112,37 @@ export const listar_productos = async (req, res) => {
         categoriasPG.length > 0 ? categoriasPG : null,
         Minimo || null,
         Maximo || null,
-        50,
-        0
+        productos_por_filtro,
+        offset
       ]
     )
 
-    if (!rows.length) {
+    // Consulta para contar el número total de productos que cumplen con los criterios
+    const { rows: contador } = await DBPostgres.query(
+      `SELECT COUNT(*)
+         FROM sena.Filtrar_Producto
+         WHERE
+             (nombre ILIKE '%' || COALESCE($1, '') || '%' OR $1 IS NULL) AND
+             (categorias && $2 OR $2 IS NULL) AND
+             (precio >= $3 OR $3 IS NULL) AND
+             (precio <= $4 OR $4 IS NULL) AND
+             estado = 'Disponible'`,
+      [
+        Nombre || null,
+        categoriasPG.length > 0 ? categoriasPG : null,
+        Minimo || null,
+        Maximo || null
+      ]
+    )
+
+    const totalProductos = parseInt(contador[0].count, 10)
+    const totalPaginas = Math.ceil(totalProductos / productos_por_filtro)
+
+    if (!Productos.length) {
       return res.status(200).json({ error: 'No hay productos disponibles' })
     }
 
-    return res.status(200).json(rows)
+    return res.status(200).json({ Productos, totalPaginas })
   } catch (error) {
     return res.status(500).json({
       errores: error

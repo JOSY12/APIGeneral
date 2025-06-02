@@ -342,6 +342,24 @@ export const carrito = async (req, res) => {
   return res.status(400).json({ Error: 'no se recivio usuario' })
 }
 
+export const historial_compras = async (req, res) => {
+  const { userId } = getAuth(req)
+  if (userId) {
+    try {
+      const { rows } = await DBPostgres.query(
+        `SELECT* FROM sena.compras_usuario WHERE usuario_id = $1`,
+        [userId]
+      )
+      if (rows) {
+        return res.status(200).json({ rows })
+      }
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}
+
 export const agregar_carrito = async (req, res) => {
   const { userId } = getAuth(req)
   const { idproducto } = req.body

@@ -18,6 +18,8 @@ stripewebhook.post('/webhook', async (req, res) => {
         ' select id from sena.usuarios WHERE id = $1',
         [event.data.object.metadata.userid]
       )
+      console.log(event.type)
+      console.log(event)
 
       switch (event.type) {
         // case 'payment_intent.created':

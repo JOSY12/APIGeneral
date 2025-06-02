@@ -15,6 +15,8 @@ clerkwebhook.post('/webhook', async (req, res) => {
         'SELECT * FROM sena.usuarios WHERE id = $1',
         [id]
       )
+      console.log(evento.type)
+      console.log(evento)
 
       switch (evento.type) {
         case 'user.created':
