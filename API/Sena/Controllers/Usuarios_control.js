@@ -347,8 +347,27 @@ export const historial_compras = async (req, res) => {
   if (userId) {
     try {
       const { rows } = await DBPostgres.query(
-        `SELECT* FROM sena.compras_usuario WHERE usuario_id = $1`,
+        `SELECT* FROM sena.compras_usuario WHERE usuario_id = $1 ORDER BY fecha_compra desc`,
         [userId]
+      )
+      if (rows) {
+        return res.status(200).json({ rows })
+      }
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}
+
+export const detalle_compra = async (req, res) => {
+  const { userId } = getAuth(req)
+  const { id } = req.params
+  if (userId) {
+    try {
+      const { rows } = await DBPostgres.query(
+        `SELECT * FROM sena.detalle_Compra WHERE sesion_id_compra = $1`,
+        [id]
       )
       if (rows) {
         return res.status(200).json({ rows })
@@ -362,7 +381,7 @@ export const historial_compras = async (req, res) => {
 
 export const agregar_carrito = async (req, res) => {
   const { userId } = getAuth(req)
-  const { idproducto } = req.body
+  const { idproducto, cantidad } = req.body
   if (userId) {
     try {
       const encontrado = await DBPostgres.query(
@@ -371,8 +390,8 @@ export const agregar_carrito = async (req, res) => {
       )
       if (!encontrado.rows.length) {
         await DBPostgres.query(
-          `INSERT INTO sena.carritos_productos (carrito_id,producto_id) values($1,$2)`,
-          [userId, idproducto]
+          `INSERT INTO sena.carritos_productos (carrito_id,producto_id,cantidad) values($1,$2 ,$3)`,
+          [userId, idproducto, cantidad ? cantidad : 1]
         )
         return res.status(200).json('exito')
       } else if (encontrado.rows.length) {

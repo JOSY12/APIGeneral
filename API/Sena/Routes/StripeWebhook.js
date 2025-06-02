@@ -18,8 +18,6 @@ stripewebhook.post('/webhook', async (req, res) => {
         ' select id from sena.usuarios WHERE id = $1',
         [event.data.object.metadata.userid]
       )
-      console.log(event.type)
-      console.log(event)
 
       switch (event.type) {
         // case 'payment_intent.created':
@@ -171,6 +169,12 @@ stripewebhook.post('/webhook', async (req, res) => {
                   item.price.product.metadata.product_id,
                   item.quantity
                 ]
+              )
+            }
+            for (let e of session.line_items.data) {
+              await DBPostgres.query(
+                ' DELETE from sena.carritos_productos WHERE carrito_id = $1 AND producto_id = $2',
+                [usuario.rows[0].id, e.price.product.metadata.product_id]
               )
             }
           }

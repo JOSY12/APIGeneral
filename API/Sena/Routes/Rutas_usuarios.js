@@ -9,6 +9,7 @@ import {
   borrar_usuarios,
   carrito,
   contador_notificaciones,
+  detalle_compra,
   favoritos,
   historial_compras,
   marcar_visto,
@@ -54,4 +55,6 @@ rutasusuarios.post('/agregar_carrito', agregar_carrito)
 rutasusuarios.delete('/quitar_carrito/:id', quitar_carrito)
 // HISTORIAL COMPRAS
 rutasusuarios.get('/mis_compras', historial_compras)
+rutasusuarios.get('/detalle_compra/:id', detalle_compra)
+
 export default rutasusuarios
