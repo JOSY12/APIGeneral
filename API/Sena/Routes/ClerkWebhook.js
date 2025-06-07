@@ -109,8 +109,8 @@ clerkwebhook.post('/webhook', async (req, res) => {
               'UPDATE sena.Atributos_usuarios SET administrador = $1, baneado = $2,rol = $3 WHERE id = $4',
               [
                 evento.data.public_metadata.administrador,
-                evento.publicMetadata.baneado,
-                evento.publicMetadata.rol,
+                evento.data.public_metadata.baneado,
+                evento.data.public_metadata.rol,
                 id
               ]
             )
