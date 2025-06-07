@@ -91,10 +91,11 @@ export const listar_productos = async (req, res) => {
   const Categorias = req.query['Categorias[]'] || []
   const Minimo = req.query.Minimo ? parseInt(req.query.Minimo, 10) : null
   const Maximo = req.query.Maximo ? parseInt(req.query.Maximo, 10) : null
+  const Pagina = req.query.Pagina ? parseInt(req.query.Pagina, 10) : 1
   const Nombre = req.query.Nombre || ''
   const categoriasPG = Array.isArray(Categorias) ? Categorias : [Categorias]
-  const productos_por_filtro = 50
-  const offset = 0
+  const productos_por_filtro = 20
+  const offset = (Pagina - 1) * productos_por_filtro
   try {
     const { rows: Productos } = await DBPostgres.query(
       `SELECT *
@@ -116,7 +117,6 @@ export const listar_productos = async (req, res) => {
         offset
       ]
     )
-
     // Consulta para contar el número total de productos que cumplen con los criterios
     const { rows: contador } = await DBPostgres.query(
       `SELECT COUNT(*)
@@ -142,7 +142,7 @@ export const listar_productos = async (req, res) => {
       return res.status(200).json({ error: 'No hay productos disponibles' })
     }
 
-    return res.status(200).json({ Productos, totalPaginas })
+    return res.status(200).json({ Productos, totalPaginas, Pagina })
   } catch (error) {
     return res.status(500).json({
       errores: error
