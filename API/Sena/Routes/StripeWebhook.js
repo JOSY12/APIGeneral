@@ -177,6 +177,12 @@ stripewebhook.post('/webhook', async (req, res) => {
                 [usuario.rows[0].id, e.price.product.metadata.product_id]
               )
             }
+            for (let e of session.line_items.data) {
+              await DBPostgres.query(
+                'update sena.productos set stock = stock - $1 where id = $2',
+                [e.quantity, e.price.product.metadata.product_id]
+              )
+            }
           }
 
           break

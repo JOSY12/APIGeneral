@@ -75,9 +75,7 @@ export const borrar_usuarios = async (req, res) => {
 }
 
 export const Actualizar_usuarios = async (req, res) => {
-  const { nombre } = req.body
-  const { id } = req.params
-  // [] actualizar con reqauth de clerk evitar usar id
+  const { userId } = getAuth(req)
   //verifica que los datos enviados existan o se rechaza la peticion
   if (!nombre || !edad || !email || !claveacceso || !id) {
     return res.status(400).json({
@@ -105,12 +103,11 @@ export const Actualizar_usuarios = async (req, res) => {
 }
 
 export const perfil_usuarios = async (req, res) => {
-  const { id } = req.params
-  // [] se puede cambiar para que sea con reqauth clerk en vez de id por params
+  const { userId } = getAuth(req)
   try {
     const { rows } = await DBPostgres.query(
       `select * from sena.usuarios where id = $1`,
-      [id]
+      [userId]
     )
 
     if (!rows.length) {
@@ -147,12 +144,11 @@ export const Actualizar_usuarios_admin = async (req, res) => {
 }
 
 export const borrar_usuarios_admin = async (req, res) => {
-  const { id } = req.params
-  // [] verificar si el usuarios es admin en clerk y en dbpostgres
+  const { userId } = getAuth(req)
   try {
     const { rows } = await DBPostgres.query(
       'delete from sena.usuarios where id = $1 returning id',
-      [id]
+      [userId]
     )
 
     if (!rows.length) {
@@ -176,7 +172,7 @@ export const notificaciones = async (req, res) => {
         [userId]
       )
       if (rows) {
-        return res.status(200).json({ rows })
+        return res.status(200).json(rows)
       }
     } catch (error) {
       return res.status(500).json({ Error: error })
@@ -188,7 +184,6 @@ export const notificaciones = async (req, res) => {
 export const borrar_notificacion = async (req, res) => {
   const { userId } = getAuth(req)
   const { id } = req.params
-  // []refactorizar si es necesario
   if (userId) {
     try {
       const { rows } = await DBPostgres.query(
