@@ -21,6 +21,4 @@ ngrok http 3000
 en localhost:4040 se ve el ngrok
 
 gpg ps> @@@@@@@@
-
-estilo idea para backend:
-https://www.creative-tim.com/twcomponents/component/windows-10-command-prompt
+ 
