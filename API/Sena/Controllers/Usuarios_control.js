@@ -441,3 +441,28 @@ export const modificar_cantidad = async (req, res) => {
   }
   return res.status(400).json({ Error: 'no se recivio usuario' })
 }
+
+export const agregar_direccion = async (req, res) => {
+  const { userId } = getAuth(req)
+  const { Nombre, Telefono, Direccion, Postal, Ciudad, Detalles } = req.body
+  if (userId) {
+    try {
+      const encontrado = await DBPostgres.query(
+        'select * from sena.favoritos where usuario_id = $1 and producto_id = $2',
+        [userId, idfavorito]
+      )
+      if (!encontrado.rows.length) {
+        await DBPostgres.query(
+          `INSERT INTO sena.favoritos (usuario_id,producto_id) values($1,$2)`,
+          [userId, idfavorito]
+        )
+        return res.status(200).json('exito')
+      } else if (encontrado.rows.length) {
+        return res.status(200).json('ya existe')
+      }
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}
