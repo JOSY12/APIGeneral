@@ -342,7 +342,7 @@ export const historial_compras = async (req, res) => {
   if (userId) {
     try {
       const { rows } = await DBPostgres.query(
-        `SELECT* FROM sena.compras_usuario WHERE usuario_id = $1 ORDER BY fecha_compra desc`,
+        `SELECT* FROM sena.compras_usuario WHERE usuario_id = $1 `,
         [userId]
       )
       if (rows) {
