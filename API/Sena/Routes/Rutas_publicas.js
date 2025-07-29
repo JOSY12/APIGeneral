@@ -4,12 +4,15 @@ import {
   comentarios_producto,
   detalle_producto,
   landing_page_productos,
-  listar_productos
+  listar_productos,
+  listar_productos_admin
 } from '../Controllers/Productos_control.js'
 
 const rutaspublicas = Router()
 
 rutaspublicas.get('/productos', listar_productos)
+rutaspublicas.get('/productos_admin', listar_productos_admin)
+
 rutaspublicas.get('/inicio_landing_page', landing_page_productos)
 
 rutaspublicas.get('/productos/:id', detalle_producto)

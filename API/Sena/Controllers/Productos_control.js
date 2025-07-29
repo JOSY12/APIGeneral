@@ -150,6 +150,66 @@ export const listar_productos = async (req, res) => {
   }
 }
 
+export const listar_productos_admin = async (req, res) => {
+  const Categorias = req.query['Categorias[]'] || []
+  const Minimo = req.query.Minimo ? parseInt(req.query.Minimo, 10) : null
+  const Maximo = req.query.Maximo ? parseInt(req.query.Maximo, 10) : null
+  const Pagina = req.query.Pagina ? parseInt(req.query.Pagina, 10) : 1
+  const Nombre = req.query.Nombre || ''
+  const categoriasPG = Array.isArray(Categorias) ? Categorias : [Categorias]
+  const productos_por_filtro = 20
+  const offset = (Pagina - 1) * productos_por_filtro
+  try {
+    const { rows: Productos } = await DBPostgres.query(
+      `SELECT *
+     FROM sena.Filtrar_Producto
+     WHERE
+         (nombre ILIKE '%' || COALESCE($1, '') || '%' OR $1 IS NULL) AND
+         (categorias && $2 OR $2 IS NULL) AND
+         (precio >= $3 OR $3 IS NULL) AND
+         (precio <= $4 OR $4 IS NULL) ORDER BY precio DESC
+     LIMIT $5 OFFSET $6;`,
+      [
+        Nombre || null,
+        categoriasPG.length > 0 ? categoriasPG : null,
+        Minimo || null,
+        Maximo || null,
+        productos_por_filtro,
+        offset
+      ]
+    )
+    // Consulta para contar el número total de productos que cumplen con los criterios
+    const { rows: contador } = await DBPostgres.query(
+      `SELECT COUNT(*)
+         FROM sena.Filtrar_Producto
+         WHERE
+             (nombre ILIKE '%' || COALESCE($1, '') || '%' OR $1 IS NULL) AND
+             (categorias && $2 OR $2 IS NULL) AND
+             (precio >= $3 OR $3 IS NULL) AND
+             (precio <= $4 OR $4 IS NULL)`,
+      [
+        Nombre || null,
+        categoriasPG.length > 0 ? categoriasPG : null,
+        Minimo || null,
+        Maximo || null
+      ]
+    )
+
+    const totalProductos = parseInt(contador[0].count, 10)
+    const totalPaginas = Math.ceil(totalProductos / productos_por_filtro)
+
+    if (!Productos.length) {
+      return res.status(200).json({ error: 'No hay productos disponibles' })
+    }
+
+    return res.status(200).json({ Productos, totalPaginas, Pagina })
+  } catch (error) {
+    return res.status(500).json({
+      errores: error
+    })
+  }
+}
+
 export const landing_page_productos = async (req, res) => {
   try {
     const Recientes = await DBPostgres.query(
