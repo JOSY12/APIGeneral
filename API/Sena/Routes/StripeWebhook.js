@@ -134,6 +134,8 @@ stripewebhook.post('/webhook', async (req, res) => {
               ]
             )
           } else {
+            // aqui se agrega la direccion de entrega y el metodo de envio
+
             await DBPostgres.query(
               'INSERT INTO sena.compras (usuario_id,sesion_id_compra,pago_id_compra,estado) values($1,$2,$3,$4)',
               [
@@ -153,6 +155,25 @@ stripewebhook.post('/webhook', async (req, res) => {
                 `Compra finalizada exitosamente,  los productos comprados se mostraran en la seccion de compras, id de la sesion: ${sessionCompleted.id}`
               ]
             )
+
+            const encontrado = await DBPostgres.query(
+              'select * from sena.direcciones_usuarios where usuario_id = $1 and predeterminada = true',
+              [usuario.rows[0].id]
+            )
+            if (encontrado.rows.length) {
+              await DBPostgres.query(
+                `INSERT INTO sena.direcciones_compras (id,nombre_comprador,ciudad,direccion,nota,telefono,codigo_postal) values($1,$2,$3,$4,$5,$6,$7)`,
+                [
+                  sessionCompleted.id,
+                  encontrado.rows[0].nombre_comprador,
+                  encontrado.rows[0].ciudad,
+                  encontrado.rows[0].direccion,
+                  encontrado.rows[0].nota,
+                  encontrado.rows[0].telefono,
+                  encontrado.rows[0].codigo_postal
+                ]
+              )
+            }
 
             const session = await PagosStripe.checkout.sessions.retrieve(
               sessionCompleted.id,

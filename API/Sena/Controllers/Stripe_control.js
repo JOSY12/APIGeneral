@@ -73,7 +73,17 @@ export const comprar_producto = async (req, res) => {
       }
     })
 
-    return res.status(200).json(link.url)
+    const direccion = await DBPostgres.query(
+      'select * from sena.direcciones_usuarios where usuario_id = $1 and predeterminada = true',
+      [userId]
+    )
+    if (direccion.rows.length && link.url) {
+      return res.status(200).json(link.url)
+    } else if (!direccion.rows.length && link.url) {
+      return res
+        .status(400)
+        .json('no tienes una direccion de envio predeterminada')
+    }
   } catch (error) {
     return res.status(500).json({
       errores: error

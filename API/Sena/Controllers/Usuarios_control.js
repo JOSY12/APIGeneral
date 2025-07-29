@@ -444,21 +444,105 @@ export const modificar_cantidad = async (req, res) => {
 
 export const agregar_direccion = async (req, res) => {
   const { userId } = getAuth(req)
-  const { Nombre, Telefono, Direccion, Postal, Ciudad, Detalles } = req.body
+  const {
+    nombre_comprador,
+    ciudad,
+    direccion,
+    nota,
+    codigo_postal,
+    telefono,
+    predeterminada
+  } = req.body
   if (userId) {
     try {
       const encontrado = await DBPostgres.query(
-        'select * from sena.favoritos where usuario_id = $1 and producto_id = $2',
-        [userId, idfavorito]
+        'select * from sena.direcciones_usuarios where usuario_id = $1 and telefono = $2 ',
+        [userId, telefono]
       )
       if (!encontrado.rows.length) {
         await DBPostgres.query(
-          `INSERT INTO sena.favoritos (usuario_id,producto_id) values($1,$2)`,
-          [userId, idfavorito]
+          `INSERT INTO sena.direcciones_usuarios (usuario_id,nombre_comprador,direccion,ciudad,codigo_postal,telefono,nota,predeterminada) values($1,$2,$3,$4,$5,$6,$7,$8)`,
+          [
+            userId,
+            nombre_comprador,
+            direccion,
+            ciudad,
+            codigo_postal,
+            telefono,
+            nota,
+            predeterminada
+          ]
         )
-        return res.status(200).json('exito')
+        return res.status(200).json('direccion creada con exito')
       } else if (encontrado.rows.length) {
         return res.status(200).json('ya existe')
+      }
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}
+
+export const eliminar_direccion = async (req, res) => {
+  const { userId } = getAuth(req)
+  const { id } = req.params
+  if (userId) {
+    try {
+      const encontrado = await DBPostgres.query(
+        'SELECT * FROM sena.direcciones_usuarios  WHERE usuario_id = $1 and id = $2 ',
+        [userId, id]
+      )
+      if (encontrado.rows.length) {
+        await DBPostgres.query(
+          `delete from sena.direcciones_usuarios WHERE id =  $1  `,
+          [id]
+        )
+        return res.status(200).json('borrado')
+      } else if (!encontrado.rows.length) {
+        return res.status(200).json('no existe')
+      }
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}
+
+export const obtener_direcciones = async (req, res) => {
+  const { userId } = getAuth(req)
+  if (userId) {
+    try {
+      const encontrado = await DBPostgres.query(
+        'SELECT * FROM sena.direcciones_usuarios WHERE usuario_id = $1  order by predeterminada desc',
+        [userId]
+      )
+      console.log(encontrado.rows)
+      if (encontrado.rows.length) {
+        return res.status(200).json(encontrado.rows)
+      }
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}
+
+export const editar_direccion_predeterminada = async (req, res) => {
+  const { userId } = getAuth(req)
+  const { id_direccion } = req.body
+  if (userId) {
+    try {
+      const updated = await DBPostgres.query(
+        'update sena.direcciones_usuarios set predeterminada = false where usuario_id = $1',
+        [userId]
+      )
+      const encontrado = await DBPostgres.query(
+        'update sena.direcciones_usuarios set predeterminada = true where usuario_id = $1 and id = $2',
+        [userId, id_direccion]
+      )
+      if (encontrado) {
+        return res.status(200).json('exito')
       }
     } catch (error) {
       return res.status(500).json({ Error: error })

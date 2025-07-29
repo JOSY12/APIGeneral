@@ -3,6 +3,7 @@ import { Router } from 'express'
 import {
   Actualizar_usuarios,
   agregar_carrito,
+  agregar_direccion,
   agregar_favorito,
   borrar_notificacion,
   borrar_todas_notificaciones,
@@ -10,11 +11,14 @@ import {
   carrito,
   contador_notificaciones,
   detalle_compra,
+  editar_direccion_predeterminada,
+  eliminar_direccion,
   favoritos,
   historial_compras,
   marcar_visto,
   modificar_cantidad,
   notificaciones,
+  obtener_direcciones,
   perfil_usuarios,
   quitar_carrito,
   quitar_favorito,
@@ -53,8 +57,14 @@ rutasusuarios.put('/carrito_cantidad', modificar_cantidad)
 
 rutasusuarios.post('/agregar_carrito', agregar_carrito)
 rutasusuarios.delete('/quitar_carrito/:id', quitar_carrito)
+
 // HISTORIAL COMPRAS
 rutasusuarios.get('/mis_compras', historial_compras)
 rutasusuarios.get('/detalle_compra/:id', detalle_compra)
 
+// DIRECCIONES
+rutasusuarios.get('/direcciones', obtener_direcciones)
+rutasusuarios.put('/predeterminar_direccion', editar_direccion_predeterminada)
+rutasusuarios.post('/agregar_direccion', agregar_direccion)
+rutasusuarios.delete('/eliminar_direccion/:id', eliminar_direccion)
 export default rutasusuarios
