@@ -563,7 +563,6 @@ export const editar_direccion_predeterminada = async (req, res) => {
 export const marcar_enviado = async (req, res) => {
   const { userId } = getAuth(req)
   const { idcompra } = req.body
-  console.log(idcompra)
   if (userId) {
     try {
       const { rows } = await DBPostgres.query(
@@ -575,6 +574,13 @@ export const marcar_enviado = async (req, res) => {
           `UPDATE sena.compras SET enviado = true WHERE sesion_id_compra = $1`,
           [idcompra]
         )
+        console.log('Compra marcada como enviada:', rows)
+
+        await DBPostgres.query(
+          `insert into sena.notificaciones (usuario_id,titulo,descripcion) values($1,'Pedido enviado','Tu pedido ${rows[0].sesion_id_compra} esta en camino')`,
+          [rows[0].usuario_id]
+        )
+
         return res.status(200).json('exito')
       }
     } catch (error) {
@@ -599,6 +605,11 @@ export const marcar_recibido = async (req, res) => {
           `UPDATE sena.compras SET recibido = true WHERE sesion_id_compra = $1`,
           [idcompra]
         )
+        await DBPostgres.query(
+          `insert into sena.notificaciones (usuario_id,titulo,descripcion) values($1,'Pedido recibido','Tu pedido ${rows[0].sesion_id_compra} ha sido notificado como recibido,gracias por tu compra ')`,
+          [rows[0].usuario_id]
+        )
+
         return res.status(200).json('exito')
       }
     } catch (error) {
