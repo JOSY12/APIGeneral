@@ -558,3 +558,52 @@ export const editar_direccion_predeterminada = async (req, res) => {
   }
   return res.status(400).json({ Error: 'no se recivio usuario' })
 }
+
+// detalles de compras
+export const marcar_enviado = async (req, res) => {
+  const { userId } = getAuth(req)
+  const { idcompra } = req.body
+  console.log(idcompra)
+  if (userId) {
+    try {
+      const { rows } = await DBPostgres.query(
+        `SELECT * FROM sena.compras WHERE sesion_id_compra = $1`,
+        [idcompra]
+      )
+      if (rows) {
+        await DBPostgres.query(
+          `UPDATE sena.compras SET enviado = true WHERE sesion_id_compra = $1`,
+          [idcompra]
+        )
+        return res.status(200).json('exito')
+      }
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}
+
+export const marcar_recibido = async (req, res) => {
+  const { userId } = getAuth(req)
+  const { idcompra } = req.body
+  console.log(idcompra)
+  if (userId) {
+    try {
+      const { rows } = await DBPostgres.query(
+        `SELECT * FROM sena.compras WHERE sesion_id_compra = $1`,
+        [idcompra]
+      )
+      if (rows) {
+        await DBPostgres.query(
+          `UPDATE sena.compras SET recibido = true WHERE sesion_id_compra = $1`,
+          [idcompra]
+        )
+        return res.status(200).json('exito')
+      }
+    } catch (error) {
+      return res.status(500).json({ Error: error })
+    }
+  }
+  return res.status(400).json({ Error: 'no se recivio usuario' })
+}

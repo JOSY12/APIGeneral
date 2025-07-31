@@ -15,6 +15,8 @@ import {
   eliminar_direccion,
   favoritos,
   historial_compras,
+  marcar_enviado,
+  marcar_recibido,
   marcar_visto,
   modificar_cantidad,
   notificaciones,
@@ -30,6 +32,7 @@ const rutasusuarios = Router()
 // rutasusuarios.post('/crear', crear_usuarios)
 //obtiene todos los usuarios sin contrasena
 rutasusuarios.get('/usuarios', todos_usuarios)
+
 // rutasusuarios.get('/tost', tost)
 rutasusuarios
   .route('/perfil')
@@ -67,4 +70,8 @@ rutasusuarios.get('/direcciones', obtener_direcciones)
 rutasusuarios.put('/predeterminar_direccion', editar_direccion_predeterminada)
 rutasusuarios.post('/agregar_direccion', agregar_direccion)
 rutasusuarios.delete('/eliminar_direccion/:id', eliminar_direccion)
+// USUARIOS
+rutasusuarios.put('/marcar_enviado', marcar_enviado)
+rutasusuarios.put('/marcar_recibido', marcar_recibido)
+
 export default rutasusuarios
