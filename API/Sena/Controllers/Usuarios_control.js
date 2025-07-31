@@ -18,7 +18,6 @@ export const todos_usuarios = async (req, res) => {
         .status(404)
         .json({ error: 'no existen usuarios en la base de datos' })
     }
-    console.log(compras.rows)
     return res.status(200).json({
       usuarios: usuarios.rows,
       datos: datos.rows,
@@ -527,7 +526,6 @@ export const obtener_direcciones = async (req, res) => {
         'SELECT * FROM sena.direcciones_usuarios WHERE usuario_id = $1  order by predeterminada desc',
         [userId]
       )
-      console.log(encontrado.rows)
       if (encontrado.rows.length) {
         return res.status(200).json(encontrado.rows)
       }
