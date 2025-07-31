@@ -137,7 +137,7 @@ stripewebhook.post('/webhook', async (req, res) => {
             // aqui se agrega la direccion de entrega y el metodo de envio
 
             await DBPostgres.query(
-              'INSERT INTO sena.compras (usuario_id,sesion_id_compra,pago_id_compra,estado) values($1,$2,$3,$4)',
+              'INSERT INTO sena.compras (usuario_id,sesion_id_compra,pago_id_compra,estado,enviado) values($1,$2,$3,$4,false)',
               [
                 usuario.rows[0].id,
                 sessionCompleted.id,
@@ -220,7 +220,7 @@ stripewebhook.post('/webhook', async (req, res) => {
 
           if (pagofallido.rows.length === 0) {
             await DBPostgres.query(
-              'INSERT INTO sena.compras (usuario_id,sesion_id_compra,pago_id_compra,estado) values($1,$2,$3,$4)',
+              'INSERT INTO sena.compras (usuario_id,sesion_id_compra,pago_id_compra,estado.enviado) values($1,$2,$3,$4,false)',
               [usuario.rows[0].id, 'vacio', paymentFailed.id, 'Compra fallida']
             )
             await DBPostgres.query(
