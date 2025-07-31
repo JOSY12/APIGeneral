@@ -6,6 +6,9 @@ export const todos_usuarios = async (req, res) => {
     const usuarios = await DBPostgres.query(
       'select * from sena.admin_todos_usuarios'
     )
+    const compras = await DBPostgres.query(
+      `SELECT  u.email AS usuario ,to_char( c.fecha_compra, 'DD/MM/YYYY HH12:MI:SS AM') AS fecha_compra ,c.estado , dc.sesion_id_compra AS id_compra,dc.nombre,dc.precio,dc.cantidad,dc.imagen FROM sena.detalle_compra dc JOIN sena.compras c  ON dc.sesion_id_compra = c.sesion_id_compra JOIN sena.usuarios u ON u.id = c.usuario_id`
+    )
 
     const datos = await DBPostgres.query('select * from sena.datos_techsells')
     if (!usuarios.rows.length) {
@@ -13,7 +16,11 @@ export const todos_usuarios = async (req, res) => {
         .status(404)
         .json({ error: 'no existen usuarios en la base de datos' })
     }
-    return res.status(200).json({ usuarios: usuarios.rows, datos: datos.rows })
+    return res.status(200).json({
+      usuarios: usuarios.rows,
+      datos: datos.rows,
+      compras: compras.rows
+    })
   } catch (error) {
     return res.status(500).json({
       errores: error
