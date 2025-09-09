@@ -9,7 +9,8 @@ apiparapaginasgenerales
 gpg -c archivo_env
 
 # Descifrar
-ma
+
+m
 gpg -d .env.gpg > .env
 
 npm install
@@ -21,4 +22,3 @@ ngrok http 3000
 en localhost:4040 se ve el ngrok
 
 gpg ps> @@@@@@@@
- 
