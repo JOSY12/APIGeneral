@@ -9,7 +9,7 @@ apiparapaginasgenerales
 gpg -c archivo_env
 
 # Descifrar
-m
+ma
 gpg -d .env.gpg > .env
 
 npm install
