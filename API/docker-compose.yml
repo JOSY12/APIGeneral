@@ -36,19 +36,19 @@ services:
     networks:
       - redlocal
   # uso ngrok para compartir servidor y probarlo en internet usando el key de ngrok privado
-  servidor_ngrok_api:
-    container_name: servidor_ngrok_api
-    image: ngrok/ngrok:latest
-    restart: unless-stopped
-    env_file:
-      - .env
-    command: http servidor_node_express:3000
-    ports:
-      - '4040:4040'
-    networks:
-      - redlocal
-    depends_on:
-      - servidor_node_express
+  # servidor_ngrok_api:
+  #   container_name: servidor_ngrok_api
+  #   image: ngrok/ngrok:latest
+  #   restart: unless-stopped
+  #   env_file:
+  #     - .env
+  #   command: http servidor_node_express:3000
+  #   ports:
+  #     - '4040:4040'
+  #   networks:
+  #     - redlocal
+  #   depends_on:
+  #     - servidor_node_express
 
 volumes:
   postgres_docker_Data:
