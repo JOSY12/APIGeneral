@@ -1,4 +1,4 @@
-# Usar una versión específica de Node.js para evitar cambios inesperados
+# Usar una versión específica de Node.js para evitar cambios inesperados ejemplo node:20-alpine
 FROM node:latest  
 
 # Establecer el directorio de trabajo
@@ -8,11 +8,11 @@ WORKDIR /usr/src/app
 # Copiar solo package.json antes de instalar dependencias
 COPY package*.json ./
 
-# Instalar dependencias con bun
+# Instalar dependencias con npm
 RUN npm install
 
 # Copiar el resto de los archivos después de instalar dependencias
 COPY . .
 
-# Usar el comando correcto para iniciar la app con bun
+# Usar el comando correcto para iniciar la app con npm
 CMD ["npm", "run", "dev"]
