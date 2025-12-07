@@ -50,6 +50,8 @@ services:
   #   depends_on:
   #     - servidor_node_express
 
+  # decidi usar el fowardporting the vscode por que es extremandamente mas facil y rapido que ngrok y funciona perfecto
+
 volumes:
   postgres_docker_Data:
 
